@@ -1,0 +1,1873 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sujeet Kumar | AI Systems Architect & Data Science Specialist</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Three.js CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        darkBg: '#05070B',
+                        cardBg: 'rgba(10, 15, 26, 0.72)',
+                        cyanGlow: '#00f0ff',
+                        blueGlow: '#2563eb',
+                        purpleGlow: '#8b5cf6',
+                        darkBorder: 'rgba(0, 240, 255, 0.15)',
+                    },
+                    fontFamily: {
+                        heading: ['"Space Grotesk"', 'sans-serif'],
+                        mono: ['"JetBrains Mono"', 'monospace'],
+                        sans: ['"Inter"', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        :root {
+            --cyan: #00f0ff;
+            --blue: #2563eb;
+            --purple: #8b5cf6;
+            --bg: #05070B;
+        }
+        body {
+            background-color: var(--bg);
+            color: #f1f5f9;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+        ::selection {
+            background: rgba(0, 240, 255, 0.25);
+            color: #00f0ff;
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #05070b; }
+        ::-webkit-scrollbar-thumb { background: rgba(0, 240, 255, 0.25); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(0, 240, 255, 0.6); }
+
+        /* Glassmorphism */
+        .glass-panel {
+            background: rgba(10, 15, 26, 0.72);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(0, 240, 255, 0.14);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.6);
+        }
+        .glass-panel-hover {
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .glass-panel-hover:hover {
+            border-color: rgba(0, 240, 255, 0.45);
+            box-shadow: 0 14px 40px -10px rgba(0, 240, 255, 0.25);
+            transform: translateY(-4px);
+        }
+        .glow-text {
+            text-shadow: 0 0 20px rgba(0, 240, 255, 0.6);
+        }
+        .bg-grid-subtle {
+            background-size: 40px 40px;
+            background-image: 
+                linear-gradient(to right, rgba(0, 240, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(0, 240, 255, 0.03) 1px, transparent 1px);
+        }
+        /* Custom Cursor */
+        .cursor-dot {
+            pointer-events: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 7px; height: 7px;
+            background-color: #00f0ff;
+            border-radius: 50%;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 10px #00f0ff;
+        }
+        .cursor-ring {
+            pointer-events: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 34px; height: 34px;
+            border: 1.5px solid rgba(0, 240, 255, 0.4);
+            border-radius: 50%;
+            z-index: 9998;
+            transform: translate(-50%, -50%);
+            transition: width 0.15s, height 0.15s, border-color 0.15s;
+        }
+        /* Holographic Card */
+        .holo-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(0,240,255,0.02) 100%);
+            border: 1px solid rgba(0, 240, 255, 0.25);
+            position: relative;
+            overflow: hidden;
+        }
+        .holo-card::after {
+            content: '';
+            position: absolute;
+            top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background: linear-gradient(45deg, transparent 45%, rgba(0,240,255,0.08) 50%, transparent 55%);
+            animation: holoShift 7s infinite linear;
+            pointer-events: none;
+        }
+        @keyframes holoShift {
+            0% { transform: translate(-30%, -30%); }
+            100% { transform: translate(30%, 30%); }
+        }
+    </style>
+</head>
+<body class="bg-darkBg bg-grid-subtle text-slate-100 antialiased relative">
+
+    <!-- Custom Cursor -->
+    <div id="cursor-dot" class="cursor-dot hidden md:block"></div>
+    <div id="cursor-ring" class="cursor-ring hidden md:block"></div>
+
+    <!-- HUD Loading Screen -->
+    <div id="loader" class="fixed inset-0 z-50 bg-[#05070B] flex flex-col items-center justify-center transition-opacity duration-700">
+        <div class="max-w-md w-full px-6">
+            <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center space-x-2 font-mono text-xs text-cyanGlow">
+                    <span class="inline-block w-2 h-2 rounded-full bg-cyanGlow animate-ping"></span>
+                    <span>INITIALIZING SUJEET AI SYSTEM</span>
+                </div>
+                <span id="loader-pct" class="font-mono text-xs text-cyanGlow">0%</span>
+            </div>
+            <div class="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden p-0.5 border border-cyan-500/20">
+                <div id="loader-bar" class="h-full bg-gradient-to-r from-blue-500 via-cyan-400 to-cyan-300 w-0 transition-all duration-300 rounded-full shadow-[0_0_12px_#00f0ff]"></div>
+            </div>
+            <div class="mt-4 font-mono text-[11px] text-slate-400 space-y-1 h-20 overflow-hidden" id="loader-logs">
+                <p>> Mounting 3D Neural Subsystems...</p>
+            </div>
+            <button id="enter-btn" onclick="dismissLoader()" class="mt-6 w-full py-2.5 px-4 rounded-lg bg-cyan-500/10 border border-cyan-400/40 text-cyan-300 font-mono text-xs font-semibold tracking-wider hover:bg-cyan-500/20 hover:border-cyan-400 transition-all hidden flex items-center justify-center space-x-2">
+                <span>ENTER AI PLATFORM</span>
+                <i data-lucide="chevron-right" class="w-4 h-4"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Navigation Header -->
+    <header id="navbar" class="fixed top-0 left-0 w-full z-40 transition-all duration-300 glass-panel border-b border-cyan-500/15 py-3.5 px-6 lg:px-12">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <a href="#hero" class="flex items-center space-x-3 group">
+                <div class="w-8 h-8 rounded-lg bg-cyan-500/10 border border-cyan-400/40 flex items-center justify-center group-hover:border-cyan-400 transition-colors">
+                    <i data-lucide="cpu" class="w-4 h-4 text-cyanGlow"></i>
+                </div>
+                <div>
+                    <span class="font-heading font-bold text-base tracking-wider text-white group-hover:text-cyanGlow transition-colors">SUJEET</span>
+                    <span class="font-mono text-xs text-cyan-400 font-light ml-1.5 opacity-80"> AI SYSTEMS</span>
+                </div>
+            </a>
+
+            <nav class="hidden lg:flex items-center space-x-8 font-mono text-xs tracking-wider">
+                <a href="#hero" class="text-slate-300 hover:text-cyanGlow transition-colors flex items-center space-x-1.5"><span class="text-cyan-500/60"></span><span>CORE</span></a>
+                <a href="#about" class="text-slate-300 hover:text-cyanGlow transition-colors flex items-center space-x-1.5"><span class="text-cyan-500/60"></span><span>ABOUT</span></a>
+                <a href="#build" class="text-slate-300 hover:text-cyanGlow transition-colors flex items-center space-x-1.5"><span class="text-cyan-500/60"></span><span>BUILD</span></a>
+                <a href="#agent-lab" class="text-slate-300 hover:text-cyanGlow transition-colors flex items-center space-x-1.5"><span class="text-cyan-500/60"></span><span>AI LABS</span></a>
+                <a href="#experience" class="text-slate-300 hover:text-cyanGlow transition-colors flex items-center space-x-1.5"><span class="text-cyan-500/60"></span><span>CAREER</span></a>
+                <a href="#projects" class="text-slate-300 hover:text-cyanGlow transition-colors flex items-center space-x-1.5"><span class="text-cyan-500/60"></span><span>PROJECTS</span></a>
+                <a href="#creative-studio" class="text-slate-300 hover:text-cyanGlow transition-colors flex items-center space-x-1.5"><span class="text-cyan-500/60"></span><span>STUDIO</span></a>
+                <a href="#contact" class="text-slate-300 hover:text-cyanGlow transition-colors flex items-center space-x-1.5"><span class="text-cyan-500/60"></span><span>CONTACT</span></a>
+            </nav>
+
+            <div class="flex items-center space-x-3 sm:space-x-4">
+                <div class="hidden sm:flex items-center space-x-2 px-3 py-1 rounded-full bg-cyan-500/5 border border-cyan-500/20 font-mono text-[11px] text-cyan-300">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                    <span>SYSTEM ONLINE</span>
+                </div>
+
+                <button id="sfx-toggle" onclick="toggleSFX()" title="Interface Audio" class="p-2 rounded-lg bg-slate-900/80 border border-slate-700/60 text-slate-300 hover:text-cyan-400 transition-all font-mono text-xs flex items-center space-x-1">
+                    <i data-lucide="volume-2" id="sfx-icon" class="w-4 h-4"></i>
+                    <span class="hidden md:inline text-[10px]">SFX</span>
+                </button>
+
+                <button onclick="toggleAIChat()" class="px-3.5 py-1.5 rounded-lg bg-gradient-to-r from-cyan-500/20 to-blue-600/20 border border-cyan-400/40 hover:border-cyan-400 text-cyan-300 hover:text-white font-mono text-xs flex items-center space-x-2 transition-all shadow-[0_0_15px_rgba(0,240,255,0.15)]">
+                    <i data-lucide="sparkles" class="w-3.5 h-3.5 text-cyanGlow"></i>
+                    <span>ASK AI</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- SECTION 04: HERO FIRST IMPRESSION & 3D AI CORE -->
+    <section id="hero" class="relative min-h-screen pt-28 pb-16 flex items-center justify-center overflow-hidden">
+        <!-- 3D Canvas Background -->
+        <div id="hero-canvas-container" class="absolute inset-0 z-0 pointer-events-auto"></div>
+
+        <!-- Hero Content Overlay -->
+        <div class="relative z-10 max-w-7xl mx-auto px-6 lg:px-12 w-full grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+            
+            <!-- Left Column: Identity & Typography -->
+            <div class="lg:col-span-7 space-y-6">
+                <!-- Status Badge -->
+                <div class="inline-flex items-center space-x-2.5 px-3.5 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-400/30 text-cyan-300 font-mono text-xs">
+                    <span class="w-2 h-2 rounded-full bg-cyanGlow animate-ping"></span>
+                    <span>AI SYSTEMS ARCHITECT & DATA SCIENCE SPECIALIST</span>
+                </div>
+
+                <h1 class="font-heading font-bold text-4xl sm:text-6xl lg:text-7xl tracking-tight text-white leading-none">
+                    SUJEET <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyanGlow via-blue-400 to-purpleGlow">KUMAR</span>
+                </h1>
+
+                <!-- Typewriter / Rotating Keywords -->
+                <div class="flex items-center space-x-3 text-lg sm:text-xl font-mono text-slate-300">
+                    <span class="text-cyan-400">></span>
+                    <span id="typewriter-text" class="text-cyan-300 font-medium"></span>
+                    <span class="w-2.5 h-5 bg-cyanGlow animate-pulse"></span>
+                </div>
+
+                <p class="text-slate-400 text-base sm:text-lg max-w-xl font-light leading-relaxed">
+                    "I don't just analyze data. I build autonomous, self-correcting agentic systems, enterprise RAG pipelines, and intelligent intelligence dashboards around it."
+                </p>
+
+                <!-- CTA Buttons -->
+                <div class="pt-2 flex flex-wrap gap-4 font-mono text-xs font-semibold">
+                    <a href="#agent-lab" class="px-6 py-3 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-slate-950 transition-all flex items-center space-x-2 shadow-[0_0_20px_rgba(0,240,255,0.4)]">
+                        <i data-lucide="terminal" class="w-4 h-4"></i>
+                        <span>ENTER AI LAB</span>
+                    </a>
+                    <a href="#projects" class="px-6 py-3 rounded-lg bg-slate-900/80 border border-cyan-500/30 text-cyan-300 hover:bg-cyan-500/10 hover:border-cyan-400 transition-all flex items-center space-x-2">
+                        <i data-lucide="layers" class="w-4 h-4"></i>
+                        <span>EXPLORE PROJECTS</span>
+                    </a>
+                    <a href="docs/Sujeet_Kumar_Pal_Resume.pdf" target="_blank" download class="px-6 py-3 rounded-lg bg-slate-900/80 border border-slate-700 hover:border-cyan-400 text-slate-200 hover:text-cyan-300 transition-all flex items-center space-x-2">
+                        <i data-lucide="download" class="w-4 h-4"></i>
+                        <span>DOWNLOAD RESUME</span>
+                    </a>
+                </div>
+
+                <!-- 3D Node Selector Pills -->
+                <div class="pt-6 border-t border-slate-800/80">
+                    <p class="font-mono text-xs text-slate-500 mb-3 uppercase tracking-wider">Inspect AI Core Subsystems:</p>
+                    <div class="flex flex-wrap gap-2.5 font-mono text-xs">
+                        <button onclick="inspectCoreNode('agents')" class="px-3 py-1.5 rounded bg-slate-900/80 border border-cyan-500/30 hover:border-cyan-400 text-cyan-300 transition-all flex items-center space-x-1.5">
+                            <span class="w-1.5 h-1.5 rounded-full bg-cyanGlow"></span>
+                            <span>AI AGENTS</span>
+                        </button>
+                        <button onclick="inspectCoreNode('rag')" class="px-3 py-1.5 rounded bg-slate-900/80 border border-blue-500/30 hover:border-blue-400 text-blue-300 transition-all flex items-center space-x-1.5">
+                            <span class="w-1.5 h-1.5 rounded-full bg-blue-400"></span>
+                            <span>RAG SYSTEMS</span>
+                        </button>
+                        <button onclick="inspectCoreNode('ml')" class="px-3 py-1.5 rounded bg-slate-900/80 border border-purple-500/30 hover:border-purple-400 text-purple-300 transition-all flex items-center space-x-1.5">
+                            <span class="w-1.5 h-1.5 rounded-full bg-purple-400"></span>
+                            <span>PREDICTIVE ML</span>
+                        </button>
+                        <button onclick="inspectCoreNode('analytics')" class="px-3 py-1.5 rounded bg-slate-900/80 border border-emerald-500/30 hover:border-emerald-400 text-emerald-300 transition-all flex items-center space-x-1.5">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                            <span>DATA ANALYTICS</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Metrics Counter Bar -->
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-4 border-t border-slate-800/80 font-mono text-xs">
+                    <div class="p-3 rounded-lg bg-slate-900/70 border border-slate-800">
+                        <div class="text-cyanGlow font-bold text-lg">4,000+</div>
+                        <div class="text-slate-400 text-[10px]">STUDENTS MENTORED</div>
+                    </div>
+                    <div class="p-3 rounded-lg bg-slate-900/70 border border-slate-800">
+                        <div class="text-blue-400 font-bold text-lg">AIR 536</div>
+                        <div class="text-slate-400 text-[10px]">NIMCET RANK</div>
+                    </div>
+                    <div class="p-3 rounded-lg bg-slate-900/70 border border-slate-800">
+                        <div class="text-purple-400 font-bold text-lg">NIT JSR</div>
+                        <div class="text-slate-400 text-[10px]">MCA GRADUATE</div>
+                    </div>
+                    <div class="p-3 rounded-lg bg-slate-900/70 border border-slate-800">
+                        <div class="text-emerald-400 font-bold text-lg"></div>
+                        <div class="text-slate-400 text-[10px]">PROD WORKFLOWS</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Holographic Digital Identity Card (With User's Real Photo) -->
+            <div class="lg:col-span-5 flex justify-center">
+                <div class="w-full max-w-sm holo-card rounded-2xl p-6 glass-panel border border-cyan-500/40 shadow-[0_0_40px_rgba(0,240,255,0.2)] relative">
+                    <!-- Top ID Bar -->
+                    <div class="flex items-center justify-between pb-3 border-b border-cyan-500/20 font-mono text-[11px] text-cyan-400">
+                        <div class="flex items-center space-x-1.5">
+                            <i data-lucide="shield-check" class="w-3.5 h-3.5 text-cyanGlow"></i>
+                            <span>ID  SUJEET-KUMAR-AI</span>
+                        </div>
+                        <span class="px-2 py-0.5 rounded bg-cyan-500/10 border border-cyan-400/40 text-[10px] text-cyan-300">AUTHENTICATED</span>
+                    </div>
+
+                    <!-- Profile Image with Holographic Frame -->
+                    <div class="my-4 relative rounded-xl overflow-hidden border border-cyan-500/30 bg-black aspect-[3/4] flex items-center justify-center group">
+                        <!-- Holographic Gradient Overlay -->
+                        <div class="absolute inset-0 bg-gradient-to-t from-darkBg via-transparent to-transparent z-10 opacity-70"></div>
+                        <div class="absolute top-2.5 right-2.5 z-20 px-2 py-0.5 rounded bg-black/70 border border-cyan-400/40 text-[10px] font-mono text-cyan-300 flex items-center space-x-1">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                            <span>VERIFIED</span>
+                        </div>
+                        
+                        <!-- Actual User Portrait Photo -->
+                        <img src="assets/sujeet_portrait.png" alt="Sujeet Kumar Pal" class="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500">
+                    </div>
+
+                    <!-- Info on Card -->
+                    <div class="space-y-2 font-mono text-xs">
+                        <h3 class="font-heading font-bold text-lg text-white">Sujeet Kumar Pal</h3>
+                        <p class="text-cyan-300 text-xs">Data Science Specialist @ Soul AI</p>
+                        <p class="text-slate-400 text-[11px]">MCA • NIT Jamshedpur (NIMCET AIR 536)</p>
+                        
+                        <div class="pt-2 border-t border-cyan-500/20 space-y-1.5 text-[11px]">
+                            <div class="flex items-center justify-between text-slate-400">
+                                <span>Core Engine</span>
+                                <span class="text-cyan-300">Python • LangChain • PyTorch</span>
+                            </div>
+                            <div class="flex items-center justify-between text-slate-400">
+                                <span>Specialization</span>
+                                <span class="text-blue-300">Agentic AI & Enterprise RAG</span>
+                            </div>
+                            <div class="flex items-center justify-between text-slate-400">
+                                <span>Industry</span>
+                                <span class="text-purple-300">Soul AI, Upstox, ThinkCogent</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bottom Bar -->
+                    <div class="mt-4 pt-3 border-t border-cyan-500/15 flex items-center justify-between font-mono text-[10px]">
+                        <span class="text-emerald-400 flex items-center space-x-1">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                            <span>STATUS: READY FOR DEPLOYMENT</span>
+                        </span>
+                        <span class="text-slate-500">CHANDIGARH, IN</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 06: ABOUT SUJEET (FEATURING SUJEET'S SKYLINE PHOTO) -->
+    <section id="about" class="py-24 px-6 lg:px-12 max-w-7xl mx-auto border-t border-cyan-500/10">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+            
+            <div class="lg:col-span-6 space-y-6">
+                <div class="inline-flex items-center space-x-2 font-mono text-xs text-cyan-400">
+                    <span>ARCHITECTURE PHILOSOPHY</span>
+                </div>
+                <h2 class="font-heading font-bold text-3xl sm:text-5xl text-white">
+                    WHO IS <span class="text-cyanGlow">SUJEET?</span>
+                </h2>
+                <blockquote class="p-4 rounded-xl bg-cyan-500/5 border-l-2 border-cyan-400 font-mono text-sm sm:text-base text-cyan-200">
+                    "I DON'T JUST ANALYZE DATA. I BUILD SYSTEMS AROUND IT."
+                </blockquote>
+                <p class="text-slate-300 text-sm leading-relaxed">
+                    Data Science Specialist at <strong>Soul AI</strong> with a Master of Computer Applications (MCA) from <strong>NIT Jamshedpur (NIMCET AIR 536)</strong>. I work at the high-leverage intersection of machine learning, agentic orchestration, and enterprise analytics.
+                </p>
+                <p class="text-slate-400 text-sm leading-relaxed">
+                    My background spans high-frequency trading analytics at <strong>Upstox</strong>, data modeling at <strong>ThinkCogent</strong>, pharmaceutical supply intelligence at <strong>Lupin India</strong>, and frontier prompt evaluation at <strong>Outlier</strong>. Alongside engineering, I have mentored <strong>4,000+ students</strong> across India in modern AI and data systems.
+                </p>
+
+                <!-- Three Structural Layers -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+                    <div class="p-3.5 rounded-xl glass-panel border border-cyan-500/20">
+                        <i data-lucide="graduation-cap" class="w-4 h-4 text-cyan-400 mb-2"></i>
+                        <h4 class="font-mono text-xs font-semibold text-white">Academic Rigor</h4>
+                        <p class="text-[11px] text-slate-400 mt-1">MCA NIT JSR (AIR 536). 225+ DSA problems solved in C++.</p>
+                    </div>
+
+                    <div class="p-3.5 rounded-xl glass-panel border border-blue-500/20">
+                        <i data-lucide="briefcase" class="w-4 h-4 text-blue-400 mb-2"></i>
+                        <h4 class="font-mono text-xs font-semibold text-white">Industry Impact</h4>
+                        <p class="text-[11px] text-slate-400 mt-1">Production workflows at Soul AI, Upstox, ThinkCogent, & Lupin.</p>
+                    </div>
+
+                    <div class="p-3.5 rounded-xl glass-panel border border-purple-500/20">
+                        <i data-lucide="users" class="w-4 h-4 text-purple-400 mb-2"></i>
+                        <h4 class="font-mono text-xs font-semibold text-white">4,000+ Mentored</h4>
+                        <p class="text-[11px] text-slate-400 mt-1">Hands-on workshops teaching AI Agents, RAG, & Python.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Visual Photo Card (Sunset Skyline Photo) -->
+            <div class="lg:col-span-6 flex justify-center">
+                <div class="relative w-full max-w-md rounded-2xl overflow-hidden glass-panel border border-cyan-500/30 shadow-[0_0_35px_rgba(0,240,255,0.15)] group">
+                    <div class="aspect-[4/5] overflow-hidden relative">
+                        <img src="assets/sujeet_skyline.jpg" alt="Sujeet Kumar Vision" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                        <div class="absolute inset-0 bg-gradient-to-t from-darkBg via-darkBg/20 to-transparent"></div>
+                        <div class="absolute bottom-6 left-6 right-6">
+                            <span class="px-2.5 py-1 rounded bg-black/60 border border-cyan-400/40 text-[10px] font-mono text-cyan-300">ARCHITECT'S VISION</span>
+                            <h4 class="font-heading font-bold text-xl text-white mt-2">"Building resilient AI systems that transform raw data streams into self-governing intelligence."</h4>
+                            <p class="font-mono text-xs text-slate-400 mt-1">Sujeet Kumar • Data Science & AI Systems</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- SECTION 07: WHAT I BUILD -->
+    <section id="build" class="py-24 px-6 lg:px-12 max-w-7xl mx-auto border-t border-cyan-500/10">
+        <div class="text-center max-w-2xl mx-auto mb-16 space-y-3">
+            <span class="font-mono text-xs text-cyan-400 tracking-widest uppercase"> INTERACTIVE TECHNOLOGY UNIVERSE</span>
+            <h2 class="font-heading font-bold text-3xl sm:text-4xl text-white">WHAT I BUILD</h2>
+            <p class="text-slate-400 text-sm">Autonomous systems, generative workflows, and intelligence engines engineered for production scale.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            
+            <!-- Card 1 -->
+            <div class="glass-panel glass-panel-hover rounded-2xl p-6 border border-cyan-500/20 relative group">
+                <div class="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-400/30 flex items-center justify-center text-cyan-400 mb-4 group-hover:scale-110 transition-transform">
+                    <i data-lucide="bot" class="w-5 h-5"></i>
+                </div>
+                <h3 class="font-heading font-semibold text-lg text-white mb-2">AI Agents & Multi-Agent Swarms</h3>
+                <p class="text-xs text-slate-400 mb-4 leading-relaxed">Autonomous goal-directed architectures using LangGraph and CrewAI with dynamic planning, memory retention, and tool calling.</p>
+                <div class="flex flex-wrap gap-1.5 font-mono text-[10px] text-cyan-300">
+                    <span class="px-2 py-0.5 rounded bg-cyan-950/60 border border-cyan-500/30">LangGraph</span>
+                    <span class="px-2 py-0.5 rounded bg-cyan-950/60 border border-cyan-500/30">CrewAI</span>
+                    <span class="px-2 py-0.5 rounded bg-cyan-950/60 border border-cyan-500/30">ReAct Loop</span>
+                </div>
+            </div>
+
+            <!-- Card 2 -->
+            <div class="glass-panel glass-panel-hover rounded-2xl p-6 border border-blue-500/20 relative group">
+                <div class="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-400/30 flex items-center justify-center text-blue-400 mb-4 group-hover:scale-110 transition-transform">
+                    <i data-lucide="database" class="w-5 h-5"></i>
+                </div>
+                <h3 class="font-heading font-semibold text-lg text-white mb-2">Agentic RAG & Vector Retrieval</h3>
+                <p class="text-xs text-slate-400 mb-4 leading-relaxed">Enterprise contextual knowledge engines with hybrid sparse/dense embeddings, reciprocal rank fusion, and hallucination guardrails.</p>
+                <div class="flex flex-wrap gap-1.5 font-mono text-[10px] text-blue-300">
+                    <span class="px-2 py-0.5 rounded bg-blue-950/60 border border-blue-500/30">Vector DB</span>
+                    <span class="px-2 py-0.5 rounded bg-blue-950/60 border border-blue-500/30">Embeddings</span>
+                    <span class="px-2 py-0.5 rounded bg-blue-950/60 border border-blue-500/30">Reranking</span>
+                </div>
+            </div>
+
+            <!-- Card 3 -->
+            <div class="glass-panel glass-panel-hover rounded-2xl p-6 border border-purple-500/20 relative group">
+                <div class="w-10 h-10 rounded-xl bg-purple-500/10 border border-purple-400/30 flex items-center justify-center text-purple-400 mb-4 group-hover:scale-110 transition-transform">
+                    <i data-lucide="brain-circuit" class="w-5 h-5"></i>
+                </div>
+                <h3 class="font-heading font-semibold text-lg text-white mb-2">Production Machine Learning</h3>
+                <p class="text-xs text-slate-400 mb-4 leading-relaxed">End-to-end predictive modeling, fraud detection classifiers, feature stores, cross-validation, and model drift monitors.</p>
+                <div class="flex flex-wrap gap-1.5 font-mono text-[10px] text-purple-300">
+                    <span class="px-2 py-0.5 rounded bg-purple-950/60 border border-purple-500/30">Scikit-learn</span>
+                    <span class="px-2 py-0.5 rounded bg-purple-950/60 border border-purple-500/30">PyTorch</span>
+                    <span class="px-2 py-0.5 rounded bg-purple-950/60 border border-purple-500/30">XGBoost</span>
+                </div>
+            </div>
+
+            <!-- Card 4 -->
+            <div class="glass-panel glass-panel-hover rounded-2xl p-6 border border-emerald-500/20 relative group">
+                <div class="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-400/30 flex items-center justify-center text-emerald-400 mb-4 group-hover:scale-110 transition-transform">
+                    <i data-lucide="bar-chart-3" class="w-5 h-5"></i>
+                </div>
+                <h3 class="font-heading font-semibold text-lg text-white mb-2">Data Analytics & BI Systems</h3>
+                <p class="text-xs text-slate-400 mb-4 leading-relaxed">Automated ETL pipelines, advanced SQL analytics, Power BI dashboards, and natural-language query translators for stakeholders.</p>
+                <div class="flex flex-wrap gap-1.5 font-mono text-[10px] text-emerald-300">
+                    <span class="px-2 py-0.5 rounded bg-emerald-950/60 border border-emerald-500/30">SQL</span>
+                    <span class="px-2 py-0.5 rounded bg-emerald-950/60 border border-emerald-500/30">Power BI</span>
+                    <span class="px-2 py-0.5 rounded bg-emerald-950/60 border border-emerald-500/30">Pandas</span>
+                </div>
+            </div>
+
+            <!-- Card 5 -->
+            <div class="glass-panel glass-panel-hover rounded-2xl p-6 border border-amber-500/20 relative group">
+                <div class="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-400/30 flex items-center justify-center text-amber-400 mb-4 group-hover:scale-110 transition-transform">
+                    <i data-lucide="code" class="w-5 h-5"></i>
+                </div>
+                <h3 class="font-heading font-semibold text-lg text-white mb-2">LLM Apps & Prompt Engineering</h3>
+                <p class="text-xs text-slate-400 mb-4 leading-relaxed">Evaluation frameworks, structured schema enforcement, few-shot prompting systems, and fine-tuning datasets for frontier models.</p>
+                <div class="flex flex-wrap gap-1.5 font-mono text-[10px] text-amber-300">
+                    <span class="px-2 py-0.5 rounded bg-amber-950/60 border border-amber-500/30">Function Calling</span>
+                    <span class="px-2 py-0.5 rounded bg-amber-950/60 border border-amber-500/30">Evals</span>
+                    <span class="px-2 py-0.5 rounded bg-amber-950/60 border border-amber-500/30">Safety</span>
+                </div>
+            </div>
+
+            <!-- Card 6 -->
+            <div class="glass-panel glass-panel-hover rounded-2xl p-6 border border-rose-500/20 relative group">
+                <div class="w-10 h-10 rounded-xl bg-rose-500/10 border border-rose-400/30 flex items-center justify-center text-rose-400 mb-4 group-hover:scale-110 transition-transform">
+                    <i data-lucide="video" class="w-5 h-5"></i>
+                </div>
+                <h3 class="font-heading font-semibold text-lg text-white mb-2">Creative AI & Filmmaking</h3>
+                <p class="text-xs text-slate-400 mb-4 leading-relaxed">Generative cinema, neural voice synthesis, AI image diffusion pipelines, and multi-modal creative workflows for modern storytelling.</p>
+                <div class="flex flex-wrap gap-1.5 font-mono text-[10px] text-rose-300">
+                    <span class="px-2 py-0.5 rounded bg-rose-950/60 border border-rose-500/30">AI Cinema</span>
+                    <span class="px-2 py-0.5 rounded bg-rose-950/60 border border-rose-500/30">Voice Cloning</span>
+                    <span class="px-2 py-0.5 rounded bg-rose-950/60 border border-rose-500/30">Diffusion</span>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- SECTION 08: INTERACTIVE AI AGENT LAB -->
+    <section id="agent-lab" class="py-24 px-6 lg:px-12 max-w-7xl mx-auto border-t border-cyan-500/10">
+        <div class="text-center max-w-3xl mx-auto mb-14 space-y-3">
+            <span class="font-mono text-xs text-cyan-400 tracking-widest uppercase"> LIVE ARCHITECTURE DEMONSTRATION</span>
+            <h2 class="font-heading font-bold text-3xl sm:text-4xl text-white">AI AGENT LAB</h2>
+            <p class="text-slate-400 text-sm">Interactive end-to-end agentic reasoning loop. Select a mission below to execute live step-by-step telemetry.</p>
+        </div>
+
+        <div class="glass-panel rounded-2xl p-6 lg:p-8 border border-cyan-500/30 space-y-8">
+            <!-- Mission Selection Bar -->
+            <div class="flex flex-wrap items-center justify-between gap-4 pb-6 border-b border-cyan-500/20">
+                <div class="flex items-center space-x-3">
+                    <span class="font-mono text-xs text-slate-400">SELECT AGENT MISSION:</span>
+                    <select id="agent-task-selector" class="px-3 py-1.5 rounded-lg bg-slate-900 border border-cyan-500/40 text-cyan-300 font-mono text-xs focus:outline-none">
+                        <option value="fintech">Mission A: FinTech Trading Volatility & Anomaly Alert</option>
+                        <option value="pharma">Mission B: Pharma Clinical Trial RAG Synthesis</option>
+                        <option value="sql">Mission C: Natural Language to SQL & Visualization</option>
+                    </select>
+                </div>
+                <button id="run-agent-btn" onclick="runAgentSimulation()" class="px-5 py-2 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-mono text-xs font-bold flex items-center space-x-2 shadow-[0_0_15px_rgba(0,240,255,0.4)]">
+                    <i data-lucide="play" class="w-4 h-4 fill-current"></i>
+                    <span>EXECUTE AGENT LOOP</span>
+                </button>
+            </div>
+
+            <!-- Centered Flow Architecture Diagram -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3 text-center font-mono">
+                <!-- Node 1 -->
+                <div id="node-0" class="agent-node p-3 rounded-xl bg-slate-900/80 border border-slate-700/80 transition-all">
+                    <div class="text-[10px] text-slate-500">STEP 01</div>
+                    <div class="text-xs font-semibold text-slate-200 mt-1">USER INPUT</div>
+                    <div class="w-2 h-2 rounded-full bg-slate-600 mx-auto mt-2 node-indicator"></div>
+                </div>
+                <!-- Node 2 -->
+                <div id="node-1" class="agent-node p-3 rounded-xl bg-slate-900/80 border border-slate-700/80 transition-all">
+                    <div class="text-[10px] text-slate-500">STEP 02</div>
+                    <div class="text-xs font-semibold text-slate-200 mt-1">PLANNER</div>
+                    <div class="w-2 h-2 rounded-full bg-slate-600 mx-auto mt-2 node-indicator"></div>
+                </div>
+                <!-- Node 3 -->
+                <div id="node-2" class="agent-node p-3 rounded-xl bg-slate-900/80 border border-slate-700/80 transition-all">
+                    <div class="text-[10px] text-slate-500">STEP 03</div>
+                    <div class="text-xs font-semibold text-slate-200 mt-1">REASONING</div>
+                    <div class="w-2 h-2 rounded-full bg-slate-600 mx-auto mt-2 node-indicator"></div>
+                </div>
+                <!-- Node 4 -->
+                <div id="node-3" class="agent-node p-3 rounded-xl bg-slate-900/80 border border-slate-700/80 transition-all">
+                    <div class="text-[10px] text-slate-500">STEP 04</div>
+                    <div class="text-xs font-semibold text-slate-200 mt-1">TOOL CALL</div>
+                    <div class="w-2 h-2 rounded-full bg-slate-600 mx-auto mt-2 node-indicator"></div>
+                </div>
+                <!-- Node 5 -->
+                <div id="node-4" class="agent-node p-3 rounded-xl bg-slate-900/80 border border-slate-700/80 transition-all">
+                    <div class="text-[10px] text-slate-500">STEP 05</div>
+                    <div class="text-xs font-semibold text-slate-200 mt-1">API / DB</div>
+                    <div class="w-2 h-2 rounded-full bg-slate-600 mx-auto mt-2 node-indicator"></div>
+                </div>
+                <!-- Node 6 -->
+                <div id="node-5" class="agent-node p-3 rounded-xl bg-slate-900/80 border border-slate-700/80 transition-all">
+                    <div class="text-[10px] text-slate-500">STEP 06</div>
+                    <div class="text-xs font-semibold text-slate-200 mt-1">OBSERVE</div>
+                    <div class="w-2 h-2 rounded-full bg-slate-600 mx-auto mt-2 node-indicator"></div>
+                </div>
+                <!-- Node 7 -->
+                <div id="node-6" class="agent-node p-3 rounded-xl bg-slate-900/80 border border-slate-700/80 transition-all">
+                    <div class="text-[10px] text-slate-500">STEP 07</div>
+                    <div class="text-xs font-semibold text-slate-200 mt-1">DECISION</div>
+                    <div class="w-2 h-2 rounded-full bg-slate-600 mx-auto mt-2 node-indicator"></div>
+                </div>
+                <!-- Node 8 -->
+                <div id="node-7" class="agent-node p-3 rounded-xl bg-slate-900/80 border border-slate-700/80 transition-all">
+                    <div class="text-[10px] text-slate-500">STEP 08</div>
+                    <div class="text-xs font-semibold text-slate-200 mt-1">FINAL OUTPUT</div>
+                    <div class="w-2 h-2 rounded-full bg-slate-600 mx-auto mt-2 node-indicator"></div>
+                </div>
+            </div>
+
+            <!-- Live Telemetry Terminal -->
+            <div class="rounded-xl bg-[#030508] border border-cyan-500/20 p-4 font-mono text-xs overflow-hidden">
+                <div class="flex items-center justify-between pb-2 mb-3 border-b border-slate-800 text-slate-500 text-[11px]">
+                    <div class="flex items-center space-x-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-rose-500/80"></span>
+                        <span class="w-2.5 h-2.5 rounded-full bg-amber-500/80"></span>
+                        <span class="w-2.5 h-2.5 rounded-full bg-emerald-500/80"></span>
+                        <span class="ml-2 text-cyan-400">AGENT_EXECUTION_STREAM // PID: 8492</span>
+                    </div>
+                    <span id="agent-status-label" class="text-slate-400">IDLE - READY</span>
+                </div>
+                <div id="agent-console" class="space-y-1.5 h-44 overflow-y-auto text-slate-300 pr-2">
+                    <p class="text-slate-500">// Ready. Press "EXECUTE AGENT LOOP" to watch autonomous reasoning in real-time.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 09 & 10: RAG LAB & 3D VECTOR EMBEDDING SPACE -->
+    <section id="rag-lab" class="py-24 px-6 lg:px-12 max-w-7xl mx-auto border-t border-cyan-500/10">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+            
+            <!-- Left Column: Explanation & Controls -->
+            <div class="lg:col-span-5 space-y-6">
+                <span class="font-mono text-xs text-blue-400 tracking-widest uppercase"> SEMANTIC RETRIEVAL LAB</span>
+                <h2 class="font-heading font-bold text-3xl sm:text-4xl text-white">VECTOR DATABASE VISUALIZER</h2>
+                <p class="text-slate-400 text-sm leading-relaxed">
+                    Rather than just listing "Vector DB", here is a live projection of high-dimensional document embeddings. Query the space below to witness nearest neighbor retrieval in real-time.
+                </p>
+
+                <!-- Flow Diagram Pills -->
+                <div class="p-4 rounded-xl bg-slate-900/80 border border-blue-500/20 font-mono text-[11px] text-slate-300 space-y-2">
+                    <div class="text-blue-400 font-semibold mb-1">PIPELINE FLOW:</div>
+                    <div class="text-slate-400">DOCUMENT → CHUNKING → EMBEDDING (ada-002) → VECTOR DB (Pinecone) → TOP-K RETRIEVAL → LLM GROUNDING</div>
+                </div>
+
+                <!-- Interactive Query Triggers -->
+                <div class="space-y-2">
+                    <span class="font-mono text-xs text-slate-400">TRY SEMANTIC PROMPTS:</span>
+                    <div class="flex flex-wrap gap-2">
+                        <button onclick="probeVectorSpace('fraud')" class="px-3 py-1.5 rounded-lg bg-blue-500/10 border border-blue-400/40 hover:bg-blue-500/20 text-blue-300 font-mono text-xs transition-all">
+                            "ML Fraud Detection"
+                        </button>
+                        <button onclick="probeVectorSpace('agent')" class="px-3 py-1.5 rounded-lg bg-cyan-500/10 border border-cyan-400/40 hover:bg-cyan-500/20 text-cyan-300 font-mono text-xs transition-all">
+                            "Agentic Tool Calling"
+                        </button>
+                        <button onclick="probeVectorSpace('sql')" class="px-3 py-1.5 rounded-lg bg-purple-500/10 border border-purple-400/40 hover:bg-purple-500/20 text-purple-300 font-mono text-xs transition-all">
+                            "SQL Data Analytics"
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Live Retrieval Result Card -->
+                <div id="rag-result-card" class="p-4 rounded-xl glass-panel border border-cyan-500/30 font-mono text-xs space-y-2">
+                    <div class="flex items-center justify-between text-cyan-400">
+                        <span>TOP RETRIEVED CHUNK</span>
+                        <span id="rag-similarity-score" class="text-emerald-400">COSINE SIM: 0.941</span>
+                    </div>
+                    <p id="rag-chunk-text" class="text-slate-300 text-[11px] leading-relaxed">
+                        "Document chunk #84: Implemented real-time anomaly scoring engine using XGBoost & Isolation Forest with sub-15ms inference latency on streaming transaction logs."
+                    </p>
+                </div>
+            </div>
+
+            <!-- Right Column: Interactive HTML5 Vector Space Canvas -->
+            <div class="lg:col-span-7">
+                <div class="rounded-2xl glass-panel border border-cyan-500/30 p-4 relative overflow-hidden">
+                    <div class="flex items-center justify-between pb-3 mb-2 border-b border-cyan-500/20 font-mono text-[11px] text-slate-400">
+                        <div class="flex items-center space-x-2">
+                            <span class="w-2 h-2 rounded-full bg-cyanGlow animate-ping"></span>
+                            <span class="text-cyan-300">EMBEDDING SPACE PROJECTION (T-SNE 2D)</span>
+                        </div>
+                        <span>84 VECTORS LOADED</span>
+                    </div>
+                    <canvas id="vector-canvas" width="600" height="380" class="w-full h-80 rounded-lg bg-[#03060a] border border-slate-800 cursor-crosshair"></canvas>
+                    <div class="mt-3 flex items-center justify-between font-mono text-[10px] text-slate-500">
+                        <span>● Cyan: Query Vector</span>
+                        <span>● Blue: Machine Learning</span>
+                        <span>● Purple: AI Agents</span>
+                        <span>● Emerald: Data Analytics</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- SECTION 11 & 12: DATA SCIENCE LAB & "ASK THE DATA" -->
+    <section id="data-lab" class="py-24 px-6 lg:px-12 max-w-7xl mx-auto border-t border-cyan-500/10">
+        <div class="text-center max-w-3xl mx-auto mb-14 space-y-3">
+            <span class="font-mono text-xs text-emerald-400 tracking-widest uppercase"> LIVE DATA PRODUCT DEMO</span>
+            <h2 class="font-heading font-bold text-3xl sm:text-4xl text-white">ASK THE DATA  AI ANALYST</h2>
+            <p class="text-slate-400 text-sm">Natural Language to Real-Time Business Intelligence & Automated Visualization.</p>
+        </div>
+
+        <div class="glass-panel rounded-2xl p-6 lg:p-8 border border-emerald-500/30 space-y-8">
+            <!-- Pipeline Flow Indicator -->
+            <div class="flex flex-wrap items-center justify-center gap-4 text-xs font-mono text-slate-400 pb-4 border-b border-slate-800">
+                <span class="text-emerald-400 font-bold">RAW CSV/PARQUET</span>
+                <span>→</span>
+                <span class="text-cyan-300">PROFILE & CLEAN</span>
+                <span>→</span>
+                <span class="text-blue-300">ANALYZE</span>
+                <span>→</span>
+                <span class="text-purple-300">SYNTHESIZE CHART</span>
+            </div>
+
+            <!-- Natural Language Query Buttons -->
+            <div class="space-y-2">
+                <span class="font-mono text-xs text-slate-400">ASK NATURAL LANGUAGE QUESTION:</span>
+                <div class="flex flex-wrap gap-2.5">
+                    <button onclick="queryDataAnalyst('revenue')" class="px-4 py-2 rounded-lg bg-slate-900 border border-emerald-500/40 hover:border-emerald-400 text-emerald-300 font-mono text-xs transition-all flex items-center space-x-2">
+                        <i data-lucide="trending-up" class="w-3.5 h-3.5"></i>
+                        <span>"Show monthly revenue trend for 2024"</span>
+                    </button>
+                    <button onclick="queryDataAnalyst('margin')" class="px-4 py-2 rounded-lg bg-slate-900 border border-cyan-500/40 hover:border-cyan-400 text-cyan-300 font-mono text-xs transition-all flex items-center space-x-2">
+                        <i data-lucide="bar-chart-2" class="w-3.5 h-3.5"></i>
+                        <span>"Which product category has highest margin?"</span>
+                    </button>
+                    <button onclick="queryDataAnalyst('churn')" class="px-4 py-2 rounded-lg bg-slate-900 border border-purple-500/40 hover:border-purple-400 text-purple-300 font-mono text-xs transition-all flex items-center space-x-2">
+                        <i data-lucide="pie-chart" class="w-3.5 h-3.5"></i>
+                        <span>"What is the correlation between churn and activity?"</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Live Chart & Insight Container -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                <!-- SVG Reactive Chart -->
+                <div class="lg:col-span-7 bg-[#03060a] p-5 rounded-xl border border-slate-800">
+                    <div class="flex items-center justify-between pb-3 mb-4 border-b border-slate-800 font-mono text-xs text-slate-400">
+                        <span id="chart-title" class="text-emerald-400">MONTHLY REVENUE RUN-RATE (USD)</span>
+                        <span class="text-slate-500">LIVE DYNAMIC SVG</span>
+                    </div>
+                    <div id="chart-display-container" class="h-64 flex items-center justify-center">
+                        <!-- Dynamic SVG inserted via JS -->
+                    </div>
+                </div>
+
+                <!-- AI Generated Insights Box -->
+                <div class="lg:col-span-5 space-y-4">
+                    <div class="p-5 rounded-xl glass-panel border border-cyan-500/30 space-y-3 font-mono text-xs">
+                        <div class="flex items-center space-x-2 text-cyan-400 font-bold">
+                            <i data-lucide="sparkles" class="w-4 h-4 text-cyanGlow"></i>
+                            <span>AI ANALYST INSIGHT</span>
+                        </div>
+                        <p id="data-insight-text" class="text-slate-300 text-xs leading-relaxed">
+                            Revenue shows consistent month-over-month acceleration (+28.4% in Q3). Highest operating margins are driven by enterprise AI agent subscriptions, with a 92% retention rate.
+                        </p>
+                    </div>
+
+                    <!-- Metrics Grid -->
+                    <div class="grid grid-cols-2 gap-3 font-mono text-xs">
+                        <div class="p-3 rounded-lg bg-slate-900/90 border border-slate-800">
+                            <div class="text-[10px] text-slate-500">MAX VALUE</div>
+                            <div id="stat-max" class="text-base font-bold text-white mt-0.5">$84,200</div>
+                        </div>
+                        <div class="p-3 rounded-lg bg-slate-900/90 border border-slate-800">
+                            <div class="text-[10px] text-slate-500">GROWTH (QoQ)</div>
+                            <div id="stat-growth" class="text-base font-bold text-emerald-400 mt-0.5">+34.8%</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- SECTION 13: CAREER SYSTEM -->
+    <section id="experience" class="py-24 px-6 lg:px-12 max-w-7xl mx-auto border-t border-cyan-500/10">
+        <div class="text-center max-w-3xl mx-auto mb-16 space-y-3">
+            <span class="font-mono text-xs text-cyan-400 tracking-widest uppercase"> CAREER SYSTEM</span>
+            <h2 class="font-heading font-bold text-3xl sm:text-4xl text-white">PROFESSIONAL EXPERIENCE</h2>
+            <p class="text-slate-400 text-sm">Engineered in story format: Problem → Approach → Technology System → Outcome.</p>
+        </div>
+
+        <!-- Timeline Cards -->
+        <div class="space-y-6">
+            
+            <!-- Role 1: Soul AI -->
+            <div class="glass-panel glass-panel-hover rounded-2xl p-6 lg:p-8 border border-cyan-500/30 relative">
+                <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
+                    <div>
+                        <h3 class="font-heading font-bold text-xl text-white">Data Science Specialist</h3>
+                        <p class="font-mono text-sm text-cyan-400">Soul AI • Jul 2025 – Present</p>
+                    </div>
+                    <span class="px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-400/30 text-cyan-300 font-mono text-xs">CURRENT ROLE</span>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4 font-mono text-xs">
+                    <div class="p-3 rounded-lg bg-slate-900/70 border border-slate-800">
+                        <span class="text-rose-400 font-semibold block mb-1">PROBLEM:</span>
+                        <span class="text-slate-300 text-[11px]">Evaluating frontier LLM outputs for quality, consistency, and agentic reasoning at scale.</span>
+                    </div>
+                    <div class="p-3 rounded-lg bg-slate-900/70 border border-slate-800">
+                        <span class="text-cyan-400 font-semibold block mb-1">APPROACH:</span>
+                        <span class="text-slate-300 text-[11px]">Automated evaluation loops, synthetic test datasets, and RAG agent pipelines.</span>
+                    </div>
+                    <div class="p-3 rounded-lg bg-slate-900/70 border border-slate-800">
+                        <span class="text-blue-400 font-semibold block mb-1">TECHNOLOGY:</span>
+                        <span class="text-slate-300 text-[11px]">Python, Pandas, NumPy, SQL, LLMs, Prompt Engineering, RAG, AI Agents, Git.</span>
+                    </div>
+                    <div class="p-3 rounded-lg bg-slate-900/70 border border-slate-800">
+                        <span class="text-emerald-400 font-semibold block mb-1">OUTCOME:</span>
+                        <span class="text-slate-300 text-[11px]">Significantly accelerated model validation latency with automated quality audit trails.</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Role 2: Upstox -->
+            <div class="glass-panel glass-panel-hover rounded-2xl p-6 lg:p-8 border border-blue-500/30 relative">
+                <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
+                    <div>
+                        <h3 class="font-heading font-bold text-xl text-white">Technology Analyst</h3>
+                        <p class="font-mono text-sm text-blue-400">Upstox • Oct 2024 – Jul 2025 | Pune, Maharashtra</p>
+                    </div>
+                    <span class="px-3 py-1 rounded-full bg-blue-500/10 border border-blue-400/30 text-blue-300 font-mono text-xs">FINTECH PLATFORM</span>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4 font-mono text-xs">
+                    <div class="p-3 rounded-lg bg-slate-900/70 border border-slate-800">
+                        <span class="text-rose-400 font-semibold block mb-1">PROBLEM:</span>
+                        <span class="text-slate-300 text-[11px]">High-frequency trading telemetry and platform performance bottleneck analysis.</span>
+                    </div>
+                    <div class="p-3 rounded-lg bg-slate-900/70 border border-slate-800">
+                        <span class="text-cyan-400 font-semibold block mb-1">APPROACH:</span>
+                        <span class="text-slate-300 text-[11px]">Engineered complex SQL extraction scripts and Python automated anomaly monitoring.</span>
+                    </div>
+                    <div class="p-3 rounded-lg bg-slate-900/70 border border-slate-800">
+                        <span class="text-blue-400 font-semibold block mb-1">TECHNOLOGY:</span>
+                        <span class="text-slate-300 text-[11px]">Python, SQL, Excel, Power BI, Git.</span>
+                    </div>
+                    <div class="p-3 rounded-lg bg-slate-900/70 border border-slate-800">
+                        <span class="text-emerald-400 font-semibold block mb-1">OUTCOME:</span>
+                        <span class="text-slate-300 text-[11px]">Enabled real-time stakeholder dashboards driving product & infra stability decisions.</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Role 3: ThinkCogent -->
+            <div class="glass-panel glass-panel-hover rounded-2xl p-6 lg:p-8 border border-purple-500/30 relative">
+                <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
+                    <div>
+                        <h3 class="font-heading font-bold text-xl text-white">Data Analyst</h3>
+                        <p class="font-mono text-sm text-purple-400">ThinkCogent • Jan 2024 – Jul 2024 | Bengaluru, Karnataka</p>
+                    </div>
+                    <span class="px-3 py-1 rounded-full bg-purple-500/10 border border-purple-400/30 text-purple-300 font-mono text-xs">ENTERPRISE BI</span>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4 font-mono text-xs">
+                    <div class="p-3 rounded-lg bg-slate-900/70 border border-slate-800">
+                        <span class="text-rose-400 font-semibold block mb-1">PROBLEM:</span>
+                        <span class="text-slate-300 text-[11px]">Fragmented enterprise data pipelines across disparate relational stores.</span>
+                    </div>
+                    <div class="p-3 rounded-lg bg-slate-900/70 border border-slate-800">
+                        <span class="text-cyan-400 font-semibold block mb-1">APPROACH:</span>
+                        <span class="text-slate-300 text-[11px]">Cleaned, transformed, and modeled normalized tables with interactive stakeholder visualizers.</span>
+                    </div>
+                    <div class="p-3 rounded-lg bg-slate-900/70 border border-slate-800">
+                        <span class="text-blue-400 font-semibold block mb-1">TECHNOLOGY:</span>
+                        <span class="text-slate-300 text-[11px]">Python, Pandas, SQL, Power BI, Tableau, Excel.</span>
+                    </div>
+                    <div class="p-3 rounded-lg bg-slate-900/70 border border-slate-800">
+                        <span class="text-emerald-400 font-semibold block mb-1">OUTCOME:</span>
+                        <span class="text-slate-300 text-[11px]">Delivered reliable recurring weekly and monthly automated business intelligence reports.</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Role 4: Lupin India -->
+            <div class="glass-panel glass-panel-hover rounded-2xl p-6 lg:p-8 border border-emerald-500/30 relative">
+                <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
+                    <div>
+                        <h3 class="font-heading font-bold text-xl text-white">Data Analyst</h3>
+                        <p class="font-mono text-sm text-emerald-400">Lupin India • Mar 2023 – Jun 2023 | Maharashtra</p>
+                    </div>
+                    <span class="px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-400/30 text-emerald-300 font-mono text-xs">PHARMACEUTICAL</span>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4 font-mono text-xs">
+                    <div class="p-3 rounded-lg bg-slate-900/70 border border-slate-800">
+                        <span class="text-rose-400 font-semibold block mb-1">PROBLEM:</span>
+                        <span class="text-slate-300 text-[11px]">Massive pharmaceutical supply-chain datasets with data quality inconsistencies.</span>
+                    </div>
+                    <div class="p-3 rounded-lg bg-slate-900/70 border border-slate-800">
+                        <span class="text-cyan-400 font-semibold block mb-1">APPROACH:</span>
+                        <span class="text-slate-300 text-[11px]">Wrote validation rules, SQL queries, and automated Excel reporting templates.</span>
+                    </div>
+                    <div class="p-3 rounded-lg bg-slate-900/70 border border-slate-800">
+                        <span class="text-blue-400 font-semibold block mb-1">TECHNOLOGY:</span>
+                        <span class="text-slate-300 text-[11px]">Excel, SQL, Power BI, Python.</span>
+                    </div>
+                    <div class="p-3 rounded-lg bg-slate-900/70 border border-slate-800">
+                        <span class="text-emerald-400 font-semibold block mb-1">OUTCOME:</span>
+                        <span class="text-slate-300 text-[11px]">Streamlined reporting accuracy and dataset reliability across departments.</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- SECTION 14 & 15: PROJECT GALAXY -->
+    <section id="projects" class="py-24 px-6 lg:px-12 max-w-7xl mx-auto border-t border-cyan-500/10">
+        <div class="text-center max-w-3xl mx-auto mb-14 space-y-3">
+            <span class="font-mono text-xs text-cyan-400 tracking-widest uppercase"> PROJECT GALAXY</span>
+            <h2 class="font-heading font-bold text-3xl sm:text-4xl text-white">ENGINEERED PROJECTS</h2>
+            <p class="text-slate-400 text-sm">Every project built to solve a concrete real-world engineering challenge.</p>
+        </div>
+
+        <!-- Featured Flagship Project: AI Data Analyst -->
+        <div class="glass-panel rounded-2xl p-8 border border-cyan-500/40 glow-cyan-box mb-12 relative overflow-hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                <div class="lg:col-span-7 space-y-4">
+                    <span class="px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-400/40 text-cyan-300 font-mono text-xs font-semibold">FLAGSHIP SYSTEM</span>
+                    <h3 class="font-heading font-bold text-2xl sm:text-3xl text-white">AI Data Analyst</h3>
+                    <p class="text-slate-300 text-sm leading-relaxed">
+                        An autonomous data intelligence system that takes raw uploaded datasets (CSV/Excel), conducts statistical profiling, cleans nulls/outliers, generates optimized Python/Pandas code via LLMs, and renders interactive visual analytics on the fly.
+                    </p>
+                    <div class="p-3 rounded-xl bg-slate-900/80 border border-slate-800 font-mono text-xs text-cyan-300">
+                        <code>USER → STREAMLIT → AI AGENT → DATA TOOLS (PANDAS/NUMPY) → VIZ → LLM INSIGHTS</code>
+                    </div>
+                    <div class="flex flex-wrap gap-2 font-mono text-xs pt-2">
+                        <span class="px-2.5 py-1 rounded bg-slate-900 border border-slate-700 text-slate-300">Streamlit</span>
+                        <span class="px-2.5 py-1 rounded bg-slate-900 border border-slate-700 text-slate-300">LangChain</span>
+                        <span class="px-2.5 py-1 rounded bg-slate-900 border border-slate-700 text-slate-300">OpenAI / Gemini</span>
+                        <span class="px-2.5 py-1 rounded bg-slate-900 border border-slate-700 text-slate-300">Pandas</span>
+                    </div>
+                </div>
+                <div class="lg:col-span-5 flex flex-col items-center justify-center space-y-4">
+                    <div class="w-full p-5 rounded-xl bg-[#03060a] border border-cyan-500/30 font-mono text-xs space-y-2">
+                        <div class="text-cyan-400 font-semibold">> Execution Highlights:</div>
+                        <div class="text-slate-400">● Zero-shot natural language query interpretation</div>
+                        <div class="text-slate-400">● Dynamic Seaborn/Plotly chart auto-generation</div>
+                        <div class="text-slate-400">● Markdown narrative summary for executive stakeholders</div>
+                    </div>
+                    <a href="https://github.com/Sujeetpaal21" target="_blank" class="w-full py-3 px-4 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-mono text-xs font-bold text-center transition-all flex items-center justify-center space-x-2">
+                        <i data-lucide="github" class="w-4 h-4"></i>
+                        <span>EXPLORE ON GITHUB</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Project Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            
+            <!-- Project: IPL Analyst -->
+            <div class="glass-panel glass-panel-hover rounded-2xl p-6 border border-slate-800 relative">
+                <div class="flex items-center justify-between mb-3 font-mono text-xs text-blue-400">
+                    <span>ANALYTICS ENGINE</span>
+                    <i data-lucide="activity" class="w-4 h-4"></i>
+                </div>
+                <h4 class="font-heading font-semibold text-lg text-white mb-2">IPL Match & Player Analyst</h4>
+                <p class="text-xs text-slate-400 mb-4">Deep statistical cricket analytics engine analyzing match trends, player strike rates, win-probabilities, and head-to-head simulations.</p>
+                <div class="flex flex-wrap gap-1.5 font-mono text-[10px] text-slate-300">
+                    <span class="px-2 py-0.5 rounded bg-slate-900 border border-slate-800">Python</span>
+                    <span class="px-2 py-0.5 rounded bg-slate-900 border border-slate-800">Pandas</span>
+                    <span class="px-2 py-0.5 rounded bg-slate-900 border border-slate-800">Streamlit</span>
+                </div>
+            </div>
+
+            <!-- Project: Amazon Sales Dashboard -->
+            <div class="glass-panel glass-panel-hover rounded-2xl p-6 border border-slate-800 relative">
+                <div class="flex items-center justify-between mb-3 font-mono text-xs text-emerald-400">
+                    <span>BUSINESS INTELLIGENCE</span>
+                    <i data-lucide="shopping-cart" class="w-4 h-4"></i>
+                </div>
+                <h4 class="font-heading font-semibold text-lg text-white mb-2">Amazon Sales Analysis Dashboard</h4>
+                <p class="text-xs text-slate-400 mb-4">End-to-end sales BI dashboard built with Power Query and Power BI, evaluating regional revenues, product margin degradation, and shipping KPIs.</p>
+                <div class="flex flex-wrap gap-1.5 font-mono text-[10px] text-slate-300">
+                    <span class="px-2 py-0.5 rounded bg-slate-900 border border-slate-800">Power BI</span>
+                    <span class="px-2 py-0.5 rounded bg-slate-900 border border-slate-800">Power Query</span>
+                    <span class="px-2 py-0.5 rounded bg-slate-900 border border-slate-800">DAX</span>
+                </div>
+            </div>
+
+            <!-- Project: Simple-Chat -->
+            <div class="glass-panel glass-panel-hover rounded-2xl p-6 border border-slate-800 relative">
+                <div class="flex items-center justify-between mb-3 font-mono text-xs text-purple-400">
+                    <span>SYSTEMS & WEB</span>
+                    <i data-lucide="message-square" class="w-4 h-4"></i>
+                </div>
+                <h4 class="font-heading font-semibold text-lg text-white mb-2">Simple-Chat Web Architecture</h4>
+                <p class="text-xs text-slate-400 mb-4">Scalable real-time web messaging application utilizing Node.js backend and Socket.io for low-latency full-duplex client communication.</p>
+                <div class="flex flex-wrap gap-1.5 font-mono text-[10px] text-slate-300">
+                    <span class="px-2 py-0.5 rounded bg-slate-900 border border-slate-800">Node.js</span>
+                    <span class="px-2 py-0.5 rounded bg-slate-900 border border-slate-800">Socket.io</span>
+                    <span class="px-2 py-0.5 rounded bg-slate-900 border border-slate-800">JavaScript</span>
+                </div>
+            </div>
+
+            <!-- Project: JARVIS & Weather Forecast -->
+            <div class="glass-panel glass-panel-hover rounded-2xl p-6 border border-slate-800 relative">
+                <div class="flex items-center justify-between mb-3 font-mono text-xs text-cyan-400">
+                    <span>VOICE & APIS</span>
+                    <i data-lucide="cloud-lightning" class="w-4 h-4"></i>
+                </div>
+                <h4 class="font-heading font-semibold text-lg text-white mb-2">JARVIS Voice & Weather Forecast</h4>
+                <p class="text-xs text-slate-400 mb-4">Multi-API autonomous assistant that processes speech commands, fetches weather forecast telemetry, and speaks back synthesized responses.</p>
+                <div class="flex flex-wrap gap-1.5 font-mono text-[10px] text-slate-300">
+                    <span class="px-2 py-0.5 rounded bg-slate-900 border border-slate-800">Python</span>
+                    <span class="px-2 py-0.5 rounded bg-slate-900 border border-slate-800">SpeechRecognition</span>
+                    <span class="px-2 py-0.5 rounded bg-slate-900 border border-slate-800">REST APIs</span>
+                </div>
+            </div>
+
+            <!-- Project: Online Voting System -->
+            <div class="glass-panel glass-panel-hover rounded-2xl p-6 border border-slate-800 relative">
+                <div class="flex items-center justify-between mb-3 font-mono text-xs text-amber-400">
+                    <span>SECURITY & C++</span>
+                    <i data-lucide="check-circle" class="w-4 h-4"></i>
+                </div>
+                <h4 class="font-heading font-semibold text-lg text-white mb-2">Online Voting System</h4>
+                <p class="text-xs text-slate-400 mb-4">High-integrity voting software in C++ designed to manage voter registry, prevent double voting, and generate verified audit totals.</p>
+                <div class="flex flex-wrap gap-1.5 font-mono text-[10px] text-slate-300">
+                    <span class="px-2 py-0.5 rounded bg-slate-900 border border-slate-800">C++</span>
+                    <span class="px-2 py-0.5 rounded bg-slate-900 border border-slate-800">File Handling</span>
+                    <span class="px-2 py-0.5 rounded bg-slate-900 border border-slate-800">Algorithms</span>
+                </div>
+            </div>
+
+            <!-- Project: SDE Sheet DSA C++ -->
+            <div class="glass-panel glass-panel-hover rounded-2xl p-6 border border-slate-800 relative">
+                <div class="flex items-center justify-between mb-3 font-mono text-xs text-rose-400">
+                    <span>ALGORITHMIC RIGOR</span>
+                    <i data-lucide="binary" class="w-4 h-4"></i>
+                </div>
+                <h4 class="font-heading font-semibold text-lg text-white mb-2">SDE Sheet // 225+ DSA C++</h4>
+                <p class="text-xs text-slate-400 mb-4">Comprehensive suite of 225+ Data Structures & Algorithms solutions covering Dynamic Programming, Graphs, Trees, and Tries.</p>
+                <div class="flex flex-wrap gap-1.5 font-mono text-[10px] text-slate-300">
+                    <span class="px-2 py-0.5 rounded bg-slate-900 border border-slate-800">DSA</span>
+                    <span class="px-2 py-0.5 rounded bg-slate-900 border border-slate-800">C++</span>
+                    <span class="px-2 py-0.5 rounded bg-slate-900 border border-slate-800">Competitive Prog</span>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- SECTION 19: CREATIVE AI STUDIO & TECHNICAL LEADERSHIP (FEATURING SUJEET'S COUCH PHOTO) -->
+    <section id="creative-studio" class="py-24 px-6 lg:px-12 max-w-7xl mx-auto border-t border-cyan-500/10">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+            
+            <!-- Photo on Left -->
+            <div class="lg:col-span-5 flex justify-center order-2 lg:order-1">
+                <div class="relative w-full max-w-md rounded-2xl overflow-hidden glass-panel border border-cyan-500/30 shadow-[0_0_35px_rgba(0,240,255,0.15)] group">
+                    <div class="aspect-[3/4] overflow-hidden relative">
+                        <img src="assets/sujeet_couch.jpg" alt="Sujeet Kumar Leadership" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                        <div class="absolute inset-0 bg-gradient-to-t from-darkBg via-transparent to-transparent"></div>
+                        <div class="absolute bottom-5 left-5 right-5">
+                            <span class="px-2.5 py-1 rounded bg-black/70 border border-cyan-400/40 text-[10px] font-mono text-cyan-300">LEADERSHIP & MENTORSHIP</span>
+                            <h4 class="font-heading font-bold text-lg text-white mt-2">"Teaching engineers to build autonomous intelligence from foundational first principles."</h4>
+                            <p class="font-mono text-xs text-slate-400 mt-1">4,000+ Students Mentored • NIT Jamshedpur MCA</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Content on Right -->
+            <div class="lg:col-span-7 space-y-6 order-1 lg:order-2">
+                <span class="font-mono text-xs text-rose-400 tracking-widest uppercase"> CREATIVE AI STUDIO & WORKSHOPS</span>
+                <h2 class="font-heading font-bold text-3xl sm:text-5xl text-white">CREATIVE AI STUDIO & LEADERSHIP</h2>
+                <p class="text-slate-300 text-sm leading-relaxed">
+                    Beyond classical algorithms, I explore the frontier of <strong>Creative AI</strong>, including neural filmmaking, AI image diffusion pipelines, synthesized voice-overs, and conversational avatars.
+                </p>
+                <p class="text-slate-400 text-sm leading-relaxed">
+                    As an educator and technical speaker, I design and lead intensive hands-on bootcamps teaching students and working professionals how to construct real-world AI agents, deploy custom RAG architectures, write enterprise prompt evaluation suites, and orchestrate modern Python pipelines.
+                </p>
+
+                <!-- Workshop Topics Grid -->
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-2 font-mono text-xs">
+                    <div class="p-3 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-300">
+                        <i data-lucide="video" class="w-4 h-4 text-rose-400 mb-1.5"></i>
+                        <span>AI Film Making</span>
+                    </div>
+                    <div class="p-3 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-300">
+                        <i data-lucide="mic" class="w-4 h-4 text-cyan-400 mb-1.5"></i>
+                        <span>Neural Voice Synthesis</span>
+                    </div>
+                    <div class="p-3 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-300">
+                        <i data-lucide="table" class="w-4 h-4 text-emerald-400 mb-1.5"></i>
+                        <span>AI in Modern Excel</span>
+                    </div>
+                    <div class="p-3 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-300">
+                        <i data-lucide="globe" class="w-4 h-4 text-blue-400 mb-1.5"></i>
+                        <span>AI-Assisted Web Dev</span>
+                    </div>
+                    <div class="p-3 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-300">
+                        <i data-lucide="git-branch" class="w-4 h-4 text-purple-400 mb-1.5"></i>
+                        <span>Git & GitHub DevOps</span>
+                    </div>
+                    <div class="p-3 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-300">
+                        <i data-lucide="terminal" class="w-4 h-4 text-amber-400 mb-1.5"></i>
+                        <span>Agentic Workflows</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- SECTION 18: RESEARCH LAB -->
+    <section id="research" class="py-24 px-6 lg:px-12 max-w-7xl mx-auto border-t border-cyan-500/10">
+        <div class="text-center max-w-3xl mx-auto mb-16 space-y-3">
+            <span class="font-mono text-xs text-purple-400 tracking-widest uppercase"> RESEARCH PUBLICATIONS</span>
+            <h2 class="font-heading font-bold text-3xl sm:text-4xl text-white">RESEARCH LAB</h2>
+            <p class="text-slate-400 text-sm">Formal peer-level research exploring Machine Learning in Financial Crime & Secure Protocols.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            
+            <!-- Paper 1 -->
+            <div class="glass-panel glass-panel-hover rounded-2xl p-8 border border-purple-500/30 space-y-4">
+                <div class="flex items-center space-x-2 font-mono text-xs text-purple-300">
+                    <i data-lucide="file-text" class="w-4 h-4"></i>
+                    <span>PUBLISHED RESEARCH (2025)</span>
+                </div>
+                <h3 class="font-heading font-bold text-xl text-white">AI-Powered Fraud Detection: Leveraging Machine Learning to Combat Financial Crimes</h3>
+                <div class="space-y-2 font-mono text-xs text-slate-300 pt-2 border-t border-slate-800">
+                    <div><span class="text-cyan-400 font-semibold">PROBLEM:</span> Sophisticated money laundering and credit-card fraud evasion.</div>
+                    <div><span class="text-blue-400 font-semibold">FEATURES:</span> Transaction velocity, graph centrality, behavioral deviation scoring.</div>
+                    <div><span class="text-purple-400 font-semibold">MODEL:</span> Gradient boosted ensemble (XGBoost) + Autoencoder anomaly detector.</div>
+                    <div><span class="text-emerald-400 font-semibold">FINDINGS:</span> 99.4% detection rate with a 42% reduction in false positives compared to traditional rule engines.</div>
+                </div>
+            </div>
+
+            <!-- Paper 2 -->
+            <div class="glass-panel glass-panel-hover rounded-2xl p-8 border border-blue-500/30 space-y-4">
+                <div class="flex items-center space-x-2 font-mono text-xs text-blue-300">
+                    <i data-lucide="shield" class="w-4 h-4"></i>
+                    <span>PUBLISHED RESEARCH (2025)</span>
+                </div>
+                <h3 class="font-heading font-bold text-xl text-white">Towards a More Secure Two-Tier ATM System: Proposed Enhancements</h3>
+                <div class="space-y-2 font-mono text-xs text-slate-300 pt-2 border-t border-slate-800">
+                    <div><span class="text-cyan-400 font-semibold">PROBLEM:</span> ATM skimming, pin-sniffing, and single-factor vulnerability.</div>
+                    <div><span class="text-blue-400 font-semibold">FEATURES:</span> Dynamic time-based token generation & biometric verification handshake.</div>
+                    <div><span class="text-purple-400 font-semibold">MODEL:</span> Two-tier zero-trust cryptographic validation protocol.</div>
+                    <div><span class="text-emerald-400 font-semibold">FINDINGS:</span> Eliminates physical skimming threat vectors while keeping authentication latency under 1.2s.</div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- SECTION 22: CONTACT - LET'S BUILD THE SYSTEM -->
+    <section id="contact" class="py-24 px-6 lg:px-12 max-w-7xl mx-auto border-t border-cyan-500/10">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12">
+            
+            <div class="lg:col-span-5 space-y-6">
+                <span class="font-mono text-xs text-cyan-400 tracking-widest uppercase"> GET IN TOUCH</span>
+                <h2 class="font-heading font-bold text-3xl sm:text-4xl text-white">HAVE A PROBLEM?<br><span class="text-cyanGlow">LET'S BUILD THE SYSTEM.</span></h2>
+                <p class="text-slate-400 text-sm leading-relaxed">
+                    Available for consulting, enterprise AI agent development, custom RAG systems, data engineering pipelines, and specialized technical workshops.
+                </p>
+
+                <!-- Direct Credentials -->
+                <div class="space-y-3 font-mono text-xs text-slate-300 pt-4">
+                    <a href="mailto:sujeetkumarpal2000@gmail.com" class="flex items-center space-x-3 p-3 rounded-xl bg-slate-900/80 border border-slate-800 hover:border-cyan-500/40 transition-colors">
+                        <i data-lucide="mail" class="w-4 h-4 text-cyan-400"></i>
+                        <span>sujeetkumarpal2000@gmail.com</span>
+                    </a>
+                    <a href="tel:+917233940008" class="flex items-center space-x-3 p-3 rounded-xl bg-slate-900/80 border border-slate-800 hover:border-cyan-500/40 transition-colors">
+                        <i data-lucide="phone" class="w-4 h-4 text-cyan-400"></i>
+                        <span>+91 72339***08</span>
+                    </a>
+                    <a href="https://www.linkedin.com/in/sujeet-kumar-pal-979b9b222/" target="_blank" class="flex items-center space-x-3 p-3 rounded-xl bg-slate-900/80 border border-slate-800 hover:border-cyan-500/40 transition-colors">
+                        <i data-lucide="linkedin" class="w-4 h-4 text-cyan-400"></i>
+                        <span>linkedin.com/in/sujeet-kumar-pal</span>
+                    </a>
+                    <a href="https://github.com/Sujeetpaal21" target="_blank" class="flex items-center space-x-3 p-3 rounded-xl bg-slate-900/80 border border-slate-800 hover:border-cyan-500/40 transition-colors">
+                        <i data-lucide="github" class="w-4 h-4 text-cyan-400"></i>
+                        <span>github.com/Sujeetpaal21</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Dynamic Discovery Form -->
+            <div class="lg:col-span-7">
+                <form id="contact-form" onsubmit="handleContactSubmit(event)" class="glass-panel rounded-2xl p-6 sm:p-8 border border-cyan-500/30 space-y-6">
+                    <div>
+                        <label class="font-mono text-xs text-slate-400 block mb-2"> WHAT SERVICE DO YOU REQUIRE?</label>
+                        <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 font-mono text-xs">
+                            <button type="button" onclick="selectService(this, 'AI Agent')" class="service-pill p-2 rounded-lg bg-cyan-500/20 border border-cyan-400 text-cyan-300">AI Agent</button>
+                            <button type="button" onclick="selectService(this, 'RAG System')" class="service-pill p-2 rounded-lg bg-slate-900 border border-slate-700 text-slate-400">RAG System</button>
+                            <button type="button" onclick="selectService(this, 'Data Analytics')" class="service-pill p-2 rounded-lg bg-slate-900 border border-slate-700 text-slate-400">Data Analytics</button>
+                            <button type="button" onclick="selectService(this, 'AI Product / App')" class="service-pill p-2 rounded-lg bg-slate-900 border border-slate-700 text-slate-400">AI Product</button>
+                            <button type="button" onclick="selectService(this, 'Training Workshop')" class="service-pill p-2 rounded-lg bg-slate-900 border border-slate-700 text-slate-400">Training</button>
+                            <button type="button" onclick="selectService(this, 'Consulting')" class="service-pill p-2 rounded-lg bg-slate-900 border border-slate-700 text-slate-400">Consulting</button>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 font-mono text-xs">
+                        <div>
+                            <label class="text-slate-400 block mb-1">YOUR NAME</label>
+                            <input type="text" required placeholder="Alex Mercer" class="w-full px-4 py-2.5 rounded-lg bg-slate-900/90 border border-slate-700 focus:border-cyan-400 focus:outline-none text-slate-100">
+                        </div>
+                        <div>
+                            <label class="text-slate-400 block mb-1">YOUR EMAIL</label>
+                            <input type="email" required placeholder="alex@company.com" class="w-full px-4 py-2.5 rounded-lg bg-slate-900/90 border border-slate-700 focus:border-cyan-400 focus:outline-none text-slate-100">
+                        </div>
+                    </div>
+
+                    <div class="font-mono text-xs">
+                        <label class="text-slate-400 block mb-1">PROBLEM STATEMENT / PROJECT DETAILS</label>
+                        <textarea id="project-desc" rows="4" required placeholder="Describe your data pipeline, desired agent workflow, or enterprise goal..." class="w-full px-4 py-2.5 rounded-lg bg-slate-900/90 border border-slate-700 focus:border-cyan-400 focus:outline-none text-slate-100"></textarea>
+                    </div>
+
+                    <button type="submit" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-mono text-xs font-bold tracking-wider transition-all shadow-[0_0_20px_rgba(0,240,255,0.3)] flex items-center justify-center space-x-2">
+                        <i data-lucide="send" class="w-4 h-4 fill-current"></i>
+                        <span>TRANSMIT DISCOVERY BRIEF</span>
+                    </button>
+                </form>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="py-12 px-6 lg:px-12 border-t border-cyan-500/15 glass-panel">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 font-mono text-xs text-slate-400">
+            <div class="flex items-center space-x-3">
+                <span class="w-2.5 h-2.5 rounded-full bg-cyanGlow"></span>
+                <span class="text-white font-heading font-semibold">SUJEET KUMAR</span>
+                <span>• DATA SCIENCE SPECIALIST • AI SYSTEMS</span>
+            </div>
+            <div>
+                <span>AUTHENTICATED BUILD • NIT JAMSHEDPUR MCA</span>
+            </div>
+            <div class="flex items-center space-x-4">
+                <a href="https://github.com/Sujeetpaal21" target="_blank" class="hover:text-cyan-400 transition-colors">GitHub</a>
+                <a href="https://www.linkedin.com/in/sujeet-kumar-pal-979b9b222/" target="_blank" class="hover:text-cyan-400 transition-colors">LinkedIn</a>
+                <a href="#hero" class="hover:text-cyan-400 transition-colors">Top ↑</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- SECTION 21: ASK SUJEET AI (CHAT ASSISTANT MODAL) -->
+    <div id="ai-chat-modal" class="fixed bottom-6 right-6 z-50 w-full max-w-sm rounded-2xl glass-panel border border-cyan-500/40 shadow-[0_0_40px_rgba(0,240,255,0.25)] flex flex-col overflow-hidden transition-all duration-300 transform translate-y-8 opacity-0 pointer-events-none">
+        <!-- Chat Header -->
+        <div class="p-4 border-b border-cyan-500/20 bg-slate-900/90 flex items-center justify-between">
+            <div class="flex items-center space-x-2.5">
+                <div class="w-8 h-8 rounded-full overflow-hidden border border-cyan-400/40">
+                    <img src="assets/sujeet_portrait.png" alt="Sujeet Avatar" class="w-full h-full object-cover">
+                </div>
+                <div>
+                    <h4 class="font-heading font-bold text-xs text-white">Ask Sujeet AI</h4>
+                    <span class="font-mono text-[10px] text-emerald-400">ONLINE  PORTFOLIO BRAIN</span>
+                </div>
+            </div>
+            <button onclick="toggleAIChat()" class="text-slate-400 hover:text-white">
+                <i data-lucide="x" class="w-4 h-4"></i>
+            </button>
+        </div>
+
+        <!-- Chat Messages -->
+        <div id="chat-messages" class="p-4 space-y-3 h-72 overflow-y-auto font-mono text-xs text-slate-300">
+            <div class="p-3 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-200">
+                Hi! I am Sujeet's portfolio intelligence agent. Ask me about his AI agent projects, RAG architectures, Soul AI experience, or NIT Jamshedpur background.
+            </div>
+        </div>
+
+        <!-- Preset Chips -->
+        <div class="px-3 py-2 bg-slate-900/70 border-t border-slate-800 flex gap-1.5 overflow-x-auto text-[10px] font-mono">
+            <button onclick="sendPresetChat('What AI systems has Sujeet built?')" class="whitespace-nowrap px-2 py-1 rounded bg-slate-800 hover:bg-cyan-500/20 text-cyan-300 border border-slate-700">What has he built?</button>
+            <button onclick="sendPresetChat('Does Sujeet know RAG?')" class="whitespace-nowrap px-2 py-1 rounded bg-slate-800 hover:bg-cyan-500/20 text-cyan-300 border border-slate-700">RAG Experience?</button>
+            <button onclick="sendPresetChat('How can I contact Sujeet?')" class="whitespace-nowrap px-2 py-1 rounded bg-slate-800 hover:bg-cyan-500/20 text-cyan-300 border border-slate-700">Contact details?</button>
+        </div>
+
+        <!-- Chat Input Form -->
+        <form onsubmit="handleChatSubmit(event)" class="p-3 border-t border-cyan-500/20 bg-slate-950 flex items-center space-x-2">
+            <input id="chat-input" type="text" placeholder="Ask a question..." class="flex-1 px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-700 focus:border-cyan-400 focus:outline-none font-mono text-xs text-white">
+            <button type="submit" class="p-2 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-slate-950">
+                <i data-lucide="send" class="w-3.5 h-3.5"></i>
+            </button>
+        </form>
+    </div>
+
+    <!-- Floating Chat Trigger Orb -->
+    <button id="ai-orb-btn" onclick="toggleAIChat()" class="fixed bottom-6 right-6 z-40 w-14 h-14 rounded-full bg-gradient-to-tr from-cyan-500 to-blue-600 border border-cyan-300 text-slate-950 flex items-center justify-center shadow-[0_0_25px_rgba(0,240,255,0.6)] hover:scale-105 transition-transform">
+        <i data-lucide="sparkles" class="w-6 h-6 text-white animate-pulse"></i>
+    </button>
+
+    <!-- ARCHITECTURE INSPECTION MODAL -->
+    <div id="arch-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-6">
+        <div class="max-w-2xl w-full glass-panel rounded-2xl p-6 border border-cyan-500/40 space-y-4">
+            <div class="flex items-center justify-between pb-3 border-b border-cyan-500/20">
+                <h3 id="arch-modal-title" class="font-heading font-bold text-lg text-white">AI SUBSYSTEM ARCHITECTURE</h3>
+                <button onclick="closeArchModal()" class="text-slate-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <div id="arch-modal-body" class="font-mono text-xs text-slate-300 space-y-3">
+                <!-- Injected via JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC & 3D ENGINE -->
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // Audio Engine (Web Audio API Synthesizer)
+        let audioCtx = null;
+        let sfxEnabled = true;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        function playTone(freq, type = 'sine', duration = 0.08) {
+            if (!sfxEnabled) return;
+            try {
+                initAudio();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = type;
+                osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + duration);
+            } catch(e) {}
+        }
+
+        function toggleSFX() {
+            sfxEnabled = !sfxEnabled;
+            const icon = document.getElementById('sfx-icon');
+            if (sfxEnabled) {
+                icon.setAttribute('data-lucide', 'volume-2');
+                playTone(800, 'sine', 0.1);
+            } else {
+                icon.setAttribute('data-lucide', 'volume-x');
+            }
+            lucide.createIcons();
+        }
+
+        // Custom Cursor Logic
+        const dot = document.getElementById('cursor-dot');
+        const ring = document.getElementById('cursor-ring');
+        let mouseX = 0, mouseY = 0, ringX = 0, ringY = 0;
+
+        window.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+            dot.style.left = `${mouseX}px`;
+            dot.style.top = `${mouseY}px`;
+        });
+
+        function animateCursor() {
+            ringX += (mouseX - ringX) * 0.15;
+            ringY += (mouseY - ringY) * 0.15;
+            ring.style.left = `${ringX}px`;
+            ring.style.top = `${ringY}px`;
+            requestAnimationFrame(animateCursor);
+        }
+        animateCursor();
+
+        // Boot Loader Sequence
+        let loadPct = 0;
+        const loaderBar = document.getElementById('loader-bar');
+        const loaderPct = document.getElementById('loader-pct');
+        const loaderLogs = document.getElementById('loader-logs');
+        const enterBtn = document.getElementById('enter-btn');
+
+        const bootMessages = [
+            "> Calibrating Vector Embedding Space (ada-002)... [OK]",
+            "> Mounting Agentic Graph Runtime (LangGraph)... [OK]",
+            "> Initializing SQL & Data Intelligence Pipeline... [OK]",
+            "> System Online. Welcome, Visitor."
+        ];
+
+        let msgIdx = 0;
+        const bootInterval = setInterval(() => {
+            loadPct += 20;
+            if (loadPct > 100) loadPct = 100;
+            loaderBar.style.width = `${loadPct}%`;
+            loaderPct.innerText = `${loadPct}%`;
+            
+            if (msgIdx < bootMessages.length) {
+                const p = document.createElement('p');
+                p.innerText = bootMessages[msgIdx];
+                loaderLogs.appendChild(p);
+                msgIdx++;
+            }
+
+            if (loadPct === 100) {
+                clearInterval(bootInterval);
+                enterBtn.classList.remove('hidden');
+                enterBtn.classList.add('flex');
+            }
+        }, 220);
+
+        function dismissLoader() {
+            playTone(900, 'sine', 0.15);
+            const loader = document.getElementById('loader');
+            loader.style.opacity = '0';
+            setTimeout(() => {
+                loader.style.display = 'none';
+            }, 700);
+        }
+
+        // Typewriter Effect
+        const roles = [
+            "Building Autonomous AI Agents",
+            "Designing Enterprise RAG Systems",
+            "Architecting Agentic Workflows",
+            "Engineering Machine Learning Pipelines",
+            "Deploying Intelligent Data Products"
+        ];
+        let roleIdx = 0, charIdx = 0, isDeleting = false;
+        const typewriterEl = document.getElementById('typewriter-text');
+
+        function type() {
+            const current = roles[roleIdx];
+            if (isDeleting) {
+                typewriterEl.innerText = current.substring(0, charIdx - 1);
+                charIdx--;
+            } else {
+                typewriterEl.innerText = current.substring(0, charIdx + 1);
+                charIdx++;
+            }
+
+            let speed = isDeleting ? 30 : 60;
+            if (!isDeleting && charIdx === current.length) {
+                speed = 2000;
+                isDeleting = true;
+            } else if (isDeleting && charIdx === 0) {
+                isDeleting = false;
+                roleIdx = (roleIdx + 1) % roles.length;
+                speed = 400;
+            }
+            setTimeout(type, speed);
+        }
+        type();
+
+        // THREE.JS 3D AI CORE SPHERE
+        let scene, camera, renderer, coreSphere, rings = [], particleCloud;
+        function initThreeHero() {
+            const container = document.getElementById('hero-canvas-container');
+            const w = container.clientWidth;
+            const h = container.clientHeight;
+
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(45, w / h, 0.1, 1000);
+            camera.position.z = 24;
+
+            renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+            renderer.setSize(w, h);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            container.appendChild(renderer.domElement);
+
+            // Core Wireframe Sphere
+            const sphereGeo = new THREE.IcosahedronGeometry(5, 3);
+            const sphereMat = new THREE.MeshBasicMaterial({
+                color: 0x00f0ff,
+                wireframe: true,
+                transparent: true,
+                opacity: 0.28
+            });
+            coreSphere = new THREE.Mesh(sphereGeo, sphereMat);
+            scene.add(coreSphere);
+
+            // Orbiting Rings
+            for (let i = 0; i < 3; i++) {
+                const ringGeo = new THREE.TorusGeometry(7 + i * 1.6, 0.04, 8, 80);
+                const ringMat = new THREE.MeshBasicMaterial({
+                    color: i === 1 ? 0x2563eb : 0x00f0ff,
+                    transparent: true,
+                    opacity: 0.35
+                });
+                const ring = new THREE.Mesh(ringGeo, ringMat);
+                ring.rotation.x = Math.random() * Math.PI;
+                ring.rotation.y = Math.random() * Math.PI;
+                rings.push(ring);
+                scene.add(ring);
+            }
+
+            // Particle Cloud
+            const partCount = 450;
+            const partGeo = new THREE.BufferGeometry();
+            const partPos = new Float32Array(partCount * 3);
+            for (let i = 0; i < partCount * 3; i += 3) {
+                partPos[i] = (Math.random() - 0.5) * 35;
+                partPos[i + 1] = (Math.random() - 0.5) * 35;
+                partPos[i + 2] = (Math.random() - 0.5) * 35;
+            }
+            partGeo.setAttribute('position', new THREE.BufferAttribute(partPos, 3));
+            const partMat = new THREE.PointsMaterial({
+                size: 0.12,
+                color: 0x00f0ff,
+                transparent: true,
+                opacity: 0.6
+            });
+            particleCloud = new THREE.Points(partGeo, partMat);
+            scene.add(particleCloud);
+
+            window.addEventListener('resize', onWindowResize);
+        }
+
+        function onWindowResize() {
+            const container = document.getElementById('hero-canvas-container');
+            if (!container) return;
+            const w = container.clientWidth;
+            const h = container.clientHeight;
+            camera.aspect = w / h;
+            camera.updateProjectionMatrix();
+            renderer.setSize(w, h);
+        }
+
+        function animateThree() {
+            requestAnimationFrame(animateThree);
+            if (coreSphere) {
+                coreSphere.rotation.y += 0.003;
+                coreSphere.rotation.x += 0.001;
+            }
+            rings.forEach((r, idx) => {
+                r.rotation.z += 0.004 * (idx + 1);
+                r.rotation.y += 0.002 * (idx + 1);
+            });
+            if (particleCloud) {
+                particleCloud.rotation.y += 0.0008;
+            }
+            renderer.render(scene, camera);
+        }
+        initThreeHero();
+        animateThree();
+
+        // Interactive Architecture Inspector Modal
+        const archData = {
+            agents: {
+                title: "01. AUTONOMOUS AI AGENT SYSTEM",
+                body: `<p><strong>Core Concept:</strong> Autonomous agents use a dynamic reasoning loop (ReAct) to formulate plans, invoke external tools, parse environmental responses, and self-correct.</p>
+                       <div class="p-3 bg-slate-900 rounded-lg border border-cyan-500/20 text-cyan-300">
+                         USER GOAL → PLANNER → TOOL DECISION → API EXECUTION → OBSERVATION → FINAL REASONED OUTPUT
+                       </div>
+                       <p><strong>Implemented Tools:</strong> Python REPL, Vector Database retriever, Web Search, SQL Query Executor.</p>`
+            },
+            rag: {
+                title: "02. ENTERPRISE RAG ARCHITECTURE",
+                body: `<p><strong>Core Concept:</strong> High-performance knowledge retrieval using hybrid dense & sparse embeddings, reciprocal rank fusion, and context reranking.</p>
+                       <div class="p-3 bg-slate-900 rounded-lg border border-blue-500/20 text-blue-300">
+                         DOCUMENTS → SEMANTIC CHUNKING → VECTOR DB → RECIPROCAL RANK FUSION → LLM GROUNDING
+                       </div>
+                       <p><strong>Benefits:</strong> Substantially eliminates hallucinations with direct verifiable citation metadata.</p>`
+            },
+            ml: {
+                title: "03. PREDICTIVE MACHINE LEARNING",
+                body: `<p><strong>Core Concept:</strong> Sub-millisecond fraud scoring and predictive analytics with feature store pipelines and continuous evaluation.</p>
+                       <div class="p-3 bg-slate-900 rounded-lg border border-purple-500/20 text-purple-300">
+                         TRANSACTION EVENT → REAL-TIME FEATURE EXTRACTOR → GRADIENT BOOSTED MODEL → ANOMALY SCORE
+                       </div>
+                       <p><strong>Production Metric:</strong> 99.4% precision with minimal false positive latency.</p>`
+            },
+            analytics: {
+                title: "04. AUTOMATED DATA INTELLIGENCE",
+                body: `<p><strong>Core Concept:</strong> Converting messy tabular data into business intelligence dashboards with automated anomaly discovery.</p>
+                       <div class="p-3 bg-slate-900 rounded-lg border border-emerald-500/20 text-emerald-300">
+                         INGESTION → AUTOMATED PROFILING → STATISTICAL MODELING → DYNAMIC VISUALIZATION
+                       </div>`
+            }
+        };
+
+        function inspectCoreNode(key) {
+            playTone(850, 'sine', 0.1);
+            const data = archData[key];
+            document.getElementById('arch-modal-title').innerText = data.title;
+            document.getElementById('arch-modal-body').innerHTML = data.body;
+            document.getElementById('arch-modal').classList.remove('hidden');
+        }
+
+        function closeArchModal() {
+            document.getElementById('arch-modal').classList.add('hidden');
+        }
+
+        // AGENT SIMULATOR LOGIC
+        const missionLogs = {
+            fintech: [
+                "TASK: Analyze market volatility on 1,400+ equity symbols for Q3 anomaly detection.",
+                "PLANNER: Decomposed mission into [Data Fetch, Volatility Calculation, Anomaly Filter].",
+                "REASONING: Invoking high-speed SQL analytics tool for order book telemetry.",
+                "TOOL CALL: execute_query('SELECT symbol, stddev(price) FROM market_ticks GROUP BY 1')",
+                "API/DB: Fetched 45,200 tick records in 18ms.",
+                "OBSERVATION: 3 symbols exhibit 4.2x standard deviation spike beyond baseline.",
+                "DECISION: Anomaly confirmed. Generating risk alert bulletin with dynamic mitigation chart.",
+                "FINAL OUTPUT: Risk alert dispatched to Trading Desk with 99.8% confidence."
+            ],
+            pharma: [
+                "TASK: Verify trial compliance for 12,000 patient cohort against FDA benchmarks.",
+                "PLANNER: Structuring semantic document retrieval for protocol guidelines.",
+                "REASONING: Querying vector database with cosine similarity threshold > 0.85.",
+                "TOOL CALL: vector_search('FDA clinical trial protocol safety parameters')",
+                "API/DB: Retrieved 6 grounded protocol documents from vector index.",
+                "OBSERVATION: No adverse contraindications found in Stage 3 dosage logs.",
+                "DECISION: Compliance verified. Synthesizing executive regulatory audit report.",
+                "FINAL OUTPUT: Audit certification document generated with source citations."
+            ],
+            sql: [
+                "TASK: 'What product category experienced the highest margin growth in Q2?'",
+                "PLANNER: Translate natural language into optimized SQLite dialect.",
+                "REASONING: Parsing database schema: orders, products, categories, line_items.",
+                "TOOL CALL: db_query('SELECT category, SUM(margin) FROM sales GROUP BY category ORDER BY 2 DESC LIMIT 1')",
+                "API/DB: Query executed in 4.2ms. Result: Enterprise AI Agents ($84,200).",
+                "OBSERVATION: Enterprise AI Agents category yielded 78% YoY gross margin.",
+                "DECISION: Render reactive SVG bar chart and summarize key revenue drivers.",
+                "FINAL OUTPUT: Visual chart rendered with statistical executive takeaway."
+            ]
+        };
+
+        function runAgentSimulation() {
+            const task = document.getElementById('agent-task-selector').value;
+            const logs = missionLogs[task];
+            const consoleEl = document.getElementById('agent-console');
+            const statusLabel = document.getElementById('agent-status-label');
+            const runBtn = document.getElementById('run-agent-btn');
+
+            consoleEl.innerHTML = '';
+            runBtn.disabled = true;
+            statusLabel.innerText = 'SIMULATING EXECUTION...';
+            statusLabel.className = 'text-cyan-400 font-bold';
+
+            let step = 0;
+            const interval = setInterval(() => {
+                if (step < 8) {
+                    for (let i = 0; i < 8; i++) {
+                        const node = document.getElementById(`node-${i}`);
+                        if (i === step) {
+                            node.classList.remove('bg-slate-900/80', 'border-slate-700/80');
+                            node.classList.add('bg-cyan-500/20', 'border-cyan-400', 'shadow-[0_0_15px_rgba(0,240,255,0.4)]');
+                            node.querySelector('.node-indicator').className = 'w-2 h-2 rounded-full bg-cyanGlow animate-ping mx-auto mt-2 node-indicator';
+                        } else {
+                            node.classList.remove('bg-cyan-500/20', 'border-cyan-400', 'shadow-[0_0_15px_rgba(0,240,255,0.4)]');
+                            node.classList.add('bg-slate-900/80', 'border-slate-700/80');
+                            node.querySelector('.node-indicator').className = 'w-2 h-2 rounded-full bg-slate-600 mx-auto mt-2 node-indicator';
+                        }
+                    }
+
+                    const p = document.createElement('p');
+                    p.innerHTML = `<span class="text-cyan-400 font-bold">[STEP 0${step+1}]</span> ${logs[step]}`;
+                    consoleEl.appendChild(p);
+                    consoleEl.scrollTop = consoleEl.scrollHeight;
+                    playTone(600 + step * 70, 'sine', 0.08);
+
+                    step++;
+                } else {
+                    clearInterval(interval);
+                    statusLabel.innerText = 'MISSION COMPLETED [200 OK]';
+                    statusLabel.className = 'text-emerald-400 font-bold';
+                    runBtn.disabled = false;
+                    playTone(1200, 'triangle', 0.2);
+                }
+            }, 600);
+        }
+
+        // VECTOR DATABASE CANVAS SIMULATION
+        const vCanvas = document.getElementById('vector-canvas');
+        const vCtx = vCanvas.getContext('2d');
+        const vPoints = [];
+
+        for (let i = 0; i < 75; i++) {
+            vPoints.push({
+                x: 30 + Math.random() * (vCanvas.width - 60),
+                y: 30 + Math.random() * (vCanvas.height - 60),
+                category: i % 3 === 0 ? 'ml' : (i % 3 === 1 ? 'agent' : 'data'),
+                radius: 3 + Math.random() * 2
+            });
+        }
+
+        let queryPoint = { x: vCanvas.width / 2, y: vCanvas.height / 2 };
+
+        function drawVectorSpace() {
+            vCtx.fillStyle = '#03060a';
+            vCtx.fillRect(0, 0, vCanvas.width, vCanvas.height);
+
+            vCtx.strokeStyle = 'rgba(255, 255, 255, 0.04)';
+            vCtx.lineWidth = 1;
+            for (let x = 0; x < vCanvas.width; x += 40) {
+                vCtx.beginPath();
+                vCtx.moveTo(x, 0); vCtx.lineTo(x, vCanvas.height);
+                vCtx.stroke();
+            }
+            for (let y = 0; y < vCanvas.height; y += 40) {
+                vCtx.beginPath();
+                vCtx.moveTo(0, y); vCtx.lineTo(vCanvas.width, y);
+                vCtx.stroke();
+            }
+
+            vPoints.forEach(p => {
+                vCtx.beginPath();
+                vCtx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                if (p.category === 'ml') vCtx.fillStyle = '#3b82f6';
+                else if (p.category === 'agent') vCtx.fillStyle = '#8b5cf6';
+                else vCtx.fillStyle = '#10b981';
+                vCtx.fill();
+            });
+
+            vCtx.beginPath();
+            vCtx.arc(queryPoint.x, queryPoint.y, 6, 0, Math.PI * 2);
+            vCtx.fillStyle = '#00f0ff';
+            vCtx.shadowColor = '#00f0ff';
+            vCtx.shadowBlur = 15;
+            vCtx.fill();
+            vCtx.shadowBlur = 0;
+
+            const sorted = [...vPoints].sort((a, b) => {
+                const distA = Math.hypot(a.x - queryPoint.x, a.y - queryPoint.y);
+                const distB = Math.hypot(b.x - queryPoint.x, b.y - queryPoint.y);
+                return distA - distB;
+            }).slice(0, 3);
+
+            sorted.forEach(p => {
+                vCtx.beginPath();
+                vCtx.moveTo(queryPoint.x, queryPoint.y);
+                vCtx.lineTo(p.x, p.y);
+                vCtx.strokeStyle = 'rgba(0, 240, 255, 0.6)';
+                vCtx.lineWidth = 1.5;
+                vCtx.stroke();
+
+                vCtx.beginPath();
+                vCtx.arc(p.x, p.y, 8, 0, Math.PI * 2);
+                vCtx.strokeStyle = '#00f0ff';
+                vCtx.stroke();
+            });
+        }
+        drawVectorSpace();
+
+        function probeVectorSpace(type) {
+            playTone(750, 'sine', 0.1);
+            if (type === 'fraud') {
+                queryPoint = { x: 120, y: 110 };
+                document.getElementById('rag-similarity-score').innerText = 'COSINE SIM: 0.954';
+                document.getElementById('rag-chunk-text').innerText = '"Research excerpt: Gradient-boosted anomaly model with real-time graph neighbor aggregation reduces transaction fraud risk by 99.4%."';
+            } else if (type === 'agent') {
+                queryPoint = { x: 380, y: 160 };
+                document.getElementById('rag-similarity-score').innerText = 'COSINE SIM: 0.938';
+                document.getElementById('rag-chunk-text').innerText = '"System architecture: LangGraph state machines coordinate multi-agent consensus loops for verifiable tool calling and error self-correction."';
+            } else {
+                queryPoint = { x: 450, y: 280 };
+                document.getElementById('rag-similarity-score').innerText = 'COSINE SIM: 0.922';
+                document.getElementById('rag-chunk-text').innerText = '"Data engine: Automated SQL query synthesis transforms complex business metrics into sub-second visual analytics with zero hallucination."';
+            }
+            drawVectorSpace();
+        }
+
+        // DATA ANALYST CHART LOGIC
+        const chartsData = {
+            revenue: {
+                title: "MONTHLY REVENUE RUN-RATE (2024)",
+                svg: `<svg viewBox="0 0 400 180" class="w-full h-full">
+                        <defs>
+                            <linearGradient id="cyanGrad" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0%" stop-color="#00f0ff" stop-opacity="0.3"/>
+                                <stop offset="100%" stop-color="#00f0ff" stop-opacity="0"/>
+                            </linearGradient>
+                        </defs>
+                        <path d="M 20,150 L 80,120 L 140,135 L 200,90 L 260,75 L 320,40 L 380,25 L 380,160 L 20,160 Z" fill="url(#cyanGrad)"/>
+                        <path d="M 20,150 L 80,120 L 140,135 L 200,90 L 260,75 L 320,40 L 380,25" fill="none" stroke="#00f0ff" stroke-width="3"/>
+                        <circle cx="380" cy="25" r="4" fill="#00f0ff"/>
+                      </svg>`,
+                insight: "Revenue exhibits steady upward acceleration (+28.4% QoQ). Top contributing streams include autonomous enterprise AI deployments and high-volume data analytics consulting.",
+                max: "$84,200",
+                growth: "+28.4%"
+            },
+            margin: {
+                title: "CATEGORY PROFIT MARGIN ANALYSIS",
+                svg: `<svg viewBox="0 0 400 180" class="w-full h-full">
+                        <rect x="30" y="50" width="50" height="110" rx="4" fill="#00f0ff"/>
+                        <rect x="120" y="80" width="50" height="80" rx="4" fill="#3b82f6"/>
+                        <rect x="210" y="30" width="50" height="130" rx="4" fill="#10b981"/>
+                        <rect x="300" y="95" width="50" height="65" rx="4" fill="#8b5cf6"/>
+                      </svg>`,
+                insight: "Enterprise AI Agents deliver the highest gross operating margin (82%), followed by RAG Knowledge Systems (74%). Standard web applications deliver stable baseline margins (45%).",
+                max: "82% Gross",
+                growth: "+14.2%"
+            },
+            churn: {
+                title: "USER CHURN VS ENGAGEMENT DISTRIBUTION",
+                svg: `<svg viewBox="0 0 400 180" class="w-full h-full">
+                        <circle cx="50" cy="140" r="5" fill="#ef4444"/>
+                        <circle cx="90" cy="120" r="5" fill="#ef4444"/>
+                        <circle cx="160" cy="80" r="5" fill="#f59e0b"/>
+                        <circle cx="240" cy="50" r="5" fill="#10b981"/>
+                        <circle cx="320" cy="35" r="5" fill="#10b981"/>
+                        <circle cx="370" cy="30" r="5" fill="#00f0ff"/>
+                        <line x1="30" y1="150" x2="380" y2="25" stroke="rgba(255,255,255,0.2)" stroke-dasharray="4"/>
+                      </svg>`,
+                insight: "Clear inverse power correlation: Accounts utilizing automated AI alerts more than 4 times per week demonstrate a 94% retention rate over 12-month cohorts.",
+                max: "94% Retain",
+                growth: "-62% Churn"
+            }
+        };
+
+        function queryDataAnalyst(key) {
+            playTone(820, 'sine', 0.1);
+            const data = chartsData[key];
+            document.getElementById('chart-title').innerText = data.title;
+            document.getElementById('chart-display-container').innerHTML = data.svg;
+            document.getElementById('data-insight-text').innerText = data.insight;
+            document.getElementById('stat-max').innerText = data.max;
+            document.getElementById('stat-growth').innerText = data.growth;
+        }
+        queryDataAnalyst('revenue');
+
+        // ASK SUJEET AI CHATBOT LOGIC
+        const aiKnowledge = [
+            { trigger: ['who', 'sujeet', 'background'], reply: "Sujeet Kumar Pal is a Data Science Specialist at Soul AI and an MCA graduate from NIT Jamshedpur (AIR 536 in NIMCET). He has also worked with Upstox, ThinkCogent, and Lupin India." },
+            { trigger: ['rag', 'retrieval'], reply: "Sujeet designs enterprise RAG systems using hybrid dense/sparse vector retrieval, chunking pipelines, and LLM context synthesis with strict hallucination guardrails." },
+            { trigger: ['agent', 'crewai', 'langgraph'], reply: "Sujeet specializes in autonomous AI agents and multi-agent workflows using LangGraph and CrewAI with dynamic planning, tool calling, and self-correcting loops." },
+            { trigger: ['project', 'built'], reply: "Flagship projects include: AI Data Analyst (Streamlit + LLM + Pandas automated analytics), IPL Analyst, Amazon Sales BI Dashboard, Simple Chat (Socket.io), and SDE Sheet (225+ DSA C++)." },
+            { trigger: ['contact', 'email', 'phone', 'hire'], reply: "You can reach Sujeet at sujeetkumarpal2000@gmail.com, phone: +91 7233940008, or via LinkedIn: https://www.linkedin.com/in/sujeet-kumar-pal-979b9b222/" }
+        ];
+
+        function toggleAIChat() {
+            playTone(900, 'sine', 0.1);
+            const modal = document.getElementById('ai-chat-modal');
+            const isHidden = modal.classList.contains('pointer-events-none');
+            if (isHidden) {
+                modal.classList.remove('pointer-events-none', 'opacity-0', 'translate-y-8');
+            } else {
+                modal.classList.add('pointer-events-none', 'opacity-0', 'translate-y-8');
+            }
+        }
+
+        function sendPresetChat(text) {
+            document.getElementById('chat-input').value = text;
+            handleChatSubmit(new Event('submit'));
+        }
+
+        function handleChatSubmit(e) {
+            e.preventDefault();
+            const input = document.getElementById('chat-input');
+            const text = input.value.trim();
+            if (!text) return;
+
+            const chatMessages = document.getElementById('chat-messages');
+
+            const userDiv = document.createElement('div');
+            userDiv.className = 'p-2.5 rounded-xl bg-slate-800 text-white text-right ml-6';
+            userDiv.innerText = text;
+            chatMessages.appendChild(userDiv);
+            input.value = '';
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            playTone(700, 'sine', 0.08);
+
+            setTimeout(() => {
+                const lower = text.toLowerCase();
+                let matchedReply = "Sujeet is an AI Systems Architect specializing in autonomous agents, RAG, and data analytics. Feel free to connect directly via email at sujeetkumarpal2000@gmail.com.";
+
+                for (let k of aiKnowledge) {
+                    if (k.trigger.some(w => lower.includes(w))) {
+                        matchedReply = k.reply;
+                        break;
+                    }
+                }
+
+                const aiDiv = document.createElement('div');
+                aiDiv.className = 'p-2.5 rounded-xl bg-cyan-500/15 border border-cyan-500/30 text-cyan-200 mr-6';
+                aiDiv.innerText = matchedReply;
+                chatMessages.appendChild(aiDiv);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+                playTone(1100, 'triangle', 0.12);
+            }, 400);
+        }
+
+        // Contact Form Helper
+        let currentService = 'AI Agent';
+        function selectService(btn, service) {
+            playTone(750, 'sine', 0.08);
+            currentService = service;
+            document.querySelectorAll('.service-pill').forEach(b => {
+                b.className = 'service-pill p-2 rounded-lg bg-slate-900 border border-slate-700 text-slate-400';
+            });
+            btn.className = 'service-pill p-2 rounded-lg bg-cyan-500/20 border border-cyan-400 text-cyan-300';
+            document.getElementById('project-desc').placeholder = `Describe requirements for your ${service} system...`;
+        }
+
+        function handleContactSubmit(e) {
+            e.preventDefault();
+            playTone(1200, 'triangle', 0.2);
+            alert(`Thank you! Your discovery inquiry for "${currentService}" has been registered. Sujeet will contact you shortly via email.`);
+            e.target.reset();
+        }
+    </script>
+</body>
+</html>
